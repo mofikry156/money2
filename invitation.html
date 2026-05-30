@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wedding Invitation</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lato:wght@100;300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lato:wght@100;300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,6 +17,64 @@
 [data-theme="sage"]  { --accent:#5a8058; --accent-d:#3a5a38; --accent-l:#a8c8a5; --accent-xl:#f0f5f0; --name-col:#0a180a; --inv-bg:#f0f5f0; --petal-c:rgba(90,128,88,0.2); }
 [data-theme="navy"]  { --accent:#3a4e9a; --accent-d:#1e2e6a; --accent-l:#8898d8; --accent-xl:#f0f2f8; --name-col:#080e26; --inv-bg:#f0f2f8; --petal-c:rgba(58,78,154,0.2); }
 [data-theme="blush"] { --accent:#a06050; --accent-d:#784038; --accent-l:#e0b8a8; --accent-xl:#fdf2ee; --name-col:#280e08; --inv-bg:#fdf2ee; --petal-c:rgba(160,96,80,0.2); }
+
+/* ── ARABIC / RTL SUPPORT ── */
+.arabic {
+  font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif !important;
+  letter-spacing: 0 !important;
+  line-height: 1.8 !important;
+}
+
+/* General RTL text — right-align only for body copy like messages/venue */
+.arabic-body {
+  direction: rtl !important;
+  text-align: right !important;
+  unicode-bidi: embed;
+}
+
+/* Names block: RTL direction but ALWAYS centered — never right-aligned */
+.inv-names.arabic-center,
+.hero-names.arabic-center {
+  direction: rtl !important;
+  unicode-bidi: embed;
+  text-align: center !important;    /* override any inherited text-align */
+  display: block;
+  width: 100%;
+}
+
+/* Each name span inside the names block */
+.inv-names.arabic-center span,
+.hero-names.arabic-center span {
+  display: block;
+  text-align: center !important;
+  direction: rtl !important;
+}
+
+/* The & separator — always centered, never pulled to a side */
+.inv-amp, .amp {
+  display: block !important;
+  text-align: center !important;
+  direction: ltr !important;        /* & is a neutral character — keep it dead center */
+  unicode-bidi: isolate !important;
+}
+
+/* Message / together-quote — center Arabic too (invitation style) */
+.inv-message.arabic-center,
+#together-quote.arabic-center {
+  direction: rtl !important;
+  text-align: center !important;
+  unicode-bidi: embed;
+}
+
+/* Venue, detail values — right-align Arabic */
+.inv-cell-val.arabic-body,
+.detail-value.arabic-body {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+/* Labels and eyebrow always stay LTR */
+.inv-cell-lbl, .inv-eyebrow { direction: ltr !important; unicode-bidi: isolate !important; text-align: center !important; }
 
 html { scroll-behavior: smooth; }
 body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', sans-serif; overflow-x: hidden; cursor: none; }
@@ -560,27 +618,49 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
 }
 
 @media print {
-  /* ── Page setup ── */
-  @page { margin: 0; size: A4 portrait; }
+  /* ── Page setup: A5 landscape gives a nice card proportion
+     and prints identically on mobile & desktop              ── */
+  @page {
+    margin: 0;
+    size: 148mm 210mm;   /* A5 portrait — same physical mm on every printer */
+  }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
-  /* Hide everything except the card */
-  html, body { margin: 0 !important; padding: 0 !important; height: 100% !important; }
-  body { background: #fdf8f0 !important; cursor: auto; }
+  /* Reset page-level layout so nothing escapes the card */
+  html {
+    width: 148mm !important;
+    height: 210mm !important;
+    overflow: hidden !important;
+    font-size: 14px !important;   /* anchor all rem/em to a stable base */
+  }
+  body {
+    width: 148mm !important;
+    height: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #fdf8f0 !important;
+    cursor: auto !important;
+    display: block !important;
+  }
 
+  /* Hide everything except the card section */
   #starfield, .petals, #cursor, #cursor-ring, #progress-bar,
   #hero, #section-together, #section-details, #section-countdown,
   #section-close, .sec-div, .hero-scroll-hint, #secret-hint,
   #section-special, .shine, .action-row { display: none !important; }
 
-  /* Card section: full A4 page */
+  /* Card section fills the whole page exactly */
   #section-card {
     display: block !important;
-    position: fixed !important;
-    inset: 0 !important;
-    padding: 48px !important;
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 148mm !important;
+    height: 210mm !important;
+    padding: 10mm !important;
     margin: 0 !important;
     background: #fdf8f0 !important;
+    box-sizing: border-box !important;
   }
 
   .card-wrap {
@@ -593,31 +673,34 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
     justify-content: center !important;
   }
 
-  /* The invitation card — stretches to fill the full page */
+  /* The invitation card — fills the physical A5 page */
   .invitation {
     position: relative !important;
     flex: 1 !important;
-    max-width: 640px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-evenly !important;
     align-items: center !important;
-    padding: 60px 72px !important;
+    padding: 12mm 14mm !important;
     background: #fdf8f0 !important;
     box-shadow: none !important;
     transform: none !important;
     transform-style: flat !important;
-    outline: 1px solid rgba(138,108,58,0.4);
-    outline-offset: -1px;
+    outline: 1px solid rgba(138,108,58,0.4) !important;
+    outline-offset: -1px !important;
+    box-sizing: border-box !important;
   }
 
   /* Inner double-border frame */
   .invitation::before {
-    content: '';
-    position: absolute;
-    inset: 18px;
-    border: 1px solid rgba(138,108,58,0.2);
-    pointer-events: none;
+    content: '' !important;
+    position: absolute !important;
+    inset: 6mm !important;
+    border: 1px solid rgba(138,108,58,0.2) !important;
+    pointer-events: none !important;
   }
 
   /* Remove noise texture */
@@ -643,15 +726,16 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
   .inv-frame       { opacity: 0.18 !important; }
   .inv-frame-inner { opacity: 0.08 !important; }
 
-  /* Typography — print-safe dark colors, slightly larger to fill space */
-  .inv-eyebrow  { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 20px !important; }
-  .inv-names    { color: #1a1005 !important; font-size: 3.6rem !important; }
-  .inv-amp      { color: #c9a96e !important; font-size: 3rem !important; }
-  .inv-divider  { margin: 32px auto !important; }
-  .inv-message  { color: #4a3820 !important; opacity: 1 !important; font-size: 1.1rem !important; line-height: 2 !important; margin-bottom: 0 !important; }
-  .inv-grid     { margin: 0 auto !important; gap: 32px !important; }
-  .inv-cell-lbl { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 10px !important; }
-  .inv-cell-val { color: #1a1005 !important; font-size: 1.1rem !important; }
+  /* Typography — fixed pt sizes so they're identical on every device */
+  .inv-eyebrow  { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 4mm !important; font-size: 6pt !important; }
+  .inv-names    { color: #1a1005 !important; font-size: 28pt !important; }
+  .inv-amp      { color: #c9a96e !important; font-size: 22pt !important; }
+  .inv-divider  { margin: 5mm auto !important; }
+  .inv-message  { color: #4a3820 !important; opacity: 1 !important; font-size: 9pt !important; line-height: 1.9 !important; margin-bottom: 0 !important; }
+  .inv-grid     { margin: 0 auto !important; gap: 5mm !important; }
+  .inv-cell-lbl { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 2mm !important; font-size: 6pt !important; }
+  .inv-cell-val { color: #1a1005 !important; font-size: 9pt !important; }
+  .inv-together { font-size: 9pt !important; }
 
   /* Divider lines */
   .inv-div-line { background: #c9a96e !important; opacity: 0.5 !important; }
@@ -960,6 +1044,88 @@ if (venue || textLocation) {
   document.getElementById('detail-venue').innerHTML = detailVenueHTML;
 }
 if (msg) document.getElementById('card-message').textContent = msg;
+
+// ── ARABIC / RTL DETECTION ──────────────────────────────────────────
+(function applyArabicSupport() {
+  const ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+  function isArabic(str) { return ARABIC_RE.test(str || ''); }
+
+  // Centered Arabic — names, message (invitation aesthetic = centered)
+  function makeArabicCenter(el) {
+    if (!el) return;
+    el.classList.add('arabic', 'arabic-center');
+    el.setAttribute('lang', 'ar');
+    // Explicitly force inline styles so nothing overrides
+    el.style.fontFamily = "'Amiri', 'Traditional Arabic', serif";
+    el.style.letterSpacing = '0';
+    el.style.direction = 'rtl';
+    el.style.textAlign = 'center';
+    el.style.unicodeBidi = 'embed';
+  }
+
+  // Right-aligned Arabic — venue, detail values (reads naturally RTL)
+  function makeArabicRight(el) {
+    if (!el) return;
+    el.classList.add('arabic', 'arabic-body');
+    el.setAttribute('lang', 'ar');
+    el.style.fontFamily = "'Amiri', 'Traditional Arabic', serif";
+    el.style.letterSpacing = '0';
+    el.style.direction = 'rtl';
+    el.style.textAlign = 'right';
+    el.style.unicodeBidi = 'embed';
+  }
+
+  const hasArabicName = isArabic(man) || isArabic(woman);
+
+  // ── Names ──
+  if (isArabic(man)) {
+    ['hero-man','card-man'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('arabic'); el.style.fontFamily="'Amiri','Traditional Arabic',serif"; el.style.letterSpacing='0'; }
+    });
+  }
+  if (isArabic(woman)) {
+    ['hero-woman','card-woman'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('arabic'); el.style.fontFamily="'Amiri','Traditional Arabic',serif"; el.style.letterSpacing='0'; }
+    });
+  }
+
+  // ── Name containers — centered RTL ──
+  if (hasArabicName) {
+    // hero-names
+    const heroNames = document.querySelector('.hero-names');
+    if (heroNames) makeArabicCenter(heroNames);
+
+    // inv-names (card)
+    const invNames = document.querySelector('.inv-names');
+    if (invNames) makeArabicCenter(invNames);
+
+    // The & / amp — keep it dead-center, direction-neutral
+    document.querySelectorAll('.amp, .inv-amp').forEach(el => {
+      el.style.display = 'block';
+      el.style.textAlign = 'center';
+      el.style.direction = 'ltr';   // & is neutral — LTR keeps it truly centered
+      el.style.unicodeBidi = 'isolate';
+    });
+
+    // Close section
+    const closeBig = document.getElementById('close-names-big');
+    if (closeBig) makeArabicCenter(closeBig);
+  }
+
+  // ── Message — centered (invitation style) ──
+  if (isArabic(msg)) {
+    makeArabicCenter(document.getElementById('card-message'));
+    makeArabicCenter(document.getElementById('together-quote'));
+  }
+
+  // ── Venue — right-aligned ──
+  if (isArabic(textLocation) || isArabic(venue)) {
+    ['card-venue','detail-venue'].forEach(id => makeArabicRight(document.getElementById(id)));
+  }
+})();
+// ────────────────────────────────────────────────────────────────────
 
 // Together quote
 const quoteText = (msg || 'joyfully invite you to celebrate the beginning of their forever');

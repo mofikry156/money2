@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wedding Invitation — Editor</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -368,6 +368,16 @@
   .field:focus-within::after { width: 100%; left: 0; }
 
   textarea { resize: vertical; min-height: 88px; line-height: 1.75; }
+
+  /* Arabic input support — auto-applied via JS when Arabic text is detected */
+  input.arabic-input, textarea.arabic-input {
+    font-family: 'Amiri', 'Traditional Arabic', serif !important;
+    direction: rtl !important;
+    text-align: right !important;
+    letter-spacing: 0 !important;
+    line-height: 2 !important;
+    font-size: 1.18rem !important;
+  }
 
   .full-row { margin-bottom: 20px; }
 
@@ -892,8 +902,38 @@
     pc.appendChild(p);
   }
 
-  // ── DRUM PICKER ──────────────────────────────────────────────────
-  // Theme selector
+  // ── ARABIC AUTO-DETECT ──────────────────────────────────────────
+  // Switches any text input/textarea to Amiri + RTL when Arabic is typed
+  (function() {
+    const ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+    function checkArabic(el) {
+      if (ARABIC_RE.test(el.value)) {
+        el.classList.add('arabic-input');
+        el.setAttribute('dir', 'rtl');
+        el.setAttribute('lang', 'ar');
+      } else {
+        el.classList.remove('arabic-input');
+        el.removeAttribute('dir');
+        el.removeAttribute('lang');
+      }
+    }
+    // Watch all existing + future inputs/textareas
+    function attachArabicDetect(el) {
+      el.addEventListener('input', () => checkArabic(el));
+      el.addEventListener('paste', () => setTimeout(() => checkArabic(el), 0));
+    }
+    document.querySelectorAll('input[type="text"], textarea').forEach(attachArabicDetect);
+    // Also watch dynamically added note textareas
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(m => m.addedNodes.forEach(node => {
+        if (node.nodeType === 1) {
+          node.querySelectorAll('input[type="text"], textarea').forEach(attachArabicDetect);
+        }
+      }));
+    });
+    observer.observe(document.getElementById('noteEntries'), { childList: true, subtree: true });
+  })();
+  // ────────────────────────────────────────────────────────────────
   let currentTheme = 'gold';
   const themeNameEl = document.getElementById('themeName');
   document.querySelectorAll('.theme-btn').forEach(btn => {
