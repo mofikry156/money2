@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wedding Invitation — Editor</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -242,25 +242,6 @@
   }
   .picker-panel.visible { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
 
-  @media (max-width: 600px) {
-    .picker-panel {
-      transform: translateY(100%);
-      min-width: 0;
-      max-width: 100%;
-      border-radius: 16px 16px 0 0;
-      padding: 0 22px 22px;
-    }
-    .picker-panel::before {
-      content: '';
-      display: block;
-      width: 40px; height: 4px;
-      background: rgba(201,169,110,0.3);
-      border-radius: 2px;
-      margin: 16px auto 18px;
-    }
-    .picker-panel.visible { transform: translateY(0); }
-  }
-
   .cal-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 16px;
@@ -370,14 +351,6 @@
     box-shadow: 0 6px 24px rgba(201,169,110,0.05);
   }
   input::placeholder, textarea::placeholder { color: rgba(253,248,240,0.25); font-style: italic; font-size: 0.95rem; }
-
-  /* Arabic input auto-styling */
-  input.arabic-input, textarea.arabic-input {
-    font-family: 'Amiri', serif;
-    direction: rtl;
-    font-size: 1.18rem;
-    letter-spacing: 0;
-  }
 
 
 
@@ -920,32 +893,6 @@
   }
 
   // ── DRUM PICKER ──────────────────────────────────────────────────
-  // ── ARABIC LIVE DETECTION ──
-  // Automatically switches inputs/textareas to Amiri + RTL when Arabic is typed
-  function hasArabic(str) {
-    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str);
-  }
-  function updateArabic(el) {
-    if (hasArabic(el.value)) {
-      el.classList.add('arabic-input');
-    } else {
-      el.classList.remove('arabic-input');
-    }
-  }
-  // Apply to all current and future text inputs / textareas
-  function watchInputs() {
-    document.querySelectorAll('input[type="text"], textarea').forEach(el => {
-      if (!el.dataset.arabicWatched) {
-        el.dataset.arabicWatched = '1';
-        el.addEventListener('input', () => updateArabic(el));
-        updateArabic(el); // check existing value
-      }
-    });
-  }
-  watchInputs();
-  // Re-run when note entries are added dynamically
-  const _origAddNote = window.addNoteEntry;
-
   // Theme selector
   let currentTheme = 'gold';
   const themeNameEl = document.getElementById('themeName');
@@ -1035,7 +982,6 @@
       </div>
     `;
     container.appendChild(div);
-    watchInputs(); // pick up new textarea in the note entry
   }
 
   function removeEntry(id) {
@@ -1159,12 +1105,7 @@
   document.getElementById('generateBtn').addEventListener('click', () => {
     const b = getBaseParams();
     const params = new URLSearchParams(b);
-    const url = 'invitation.html?' + params.toString();
-    if (isMobile) {
-      window.location.href = url;
-    } else {
-      window.open(url, '_blank', 'noopener');
-    }
+    window.open('invitation.html?' + params.toString(), '_blank', 'noopener');
   });
 
   // Special invitations
@@ -1196,12 +1137,7 @@
     // Encode all notes as a JSON array
     params.set('special', btoa(unescape(encodeURIComponent(JSON.stringify(allNotes)))));
 
-    const url = 'invitation.html?' + params.toString();
-    if (isMobile) {
-      window.location.href = url;
-    } else {
-      window.open(url, '_blank', 'noopener');
-    }
+    window.open('invitation.html?' + params.toString(), '_blank', 'noopener');
   });
 
   document.getElementById('addNoteBtn').addEventListener('click', () => {
@@ -1270,43 +1206,17 @@
     };
 
     function positionPanel(trigger) {
-      const vw = window.innerWidth;
-      if (vw <= 600) {
-        // Mobile: slide up as a bottom sheet
-        panel.style.position = 'fixed';
-        panel.style.left     = '0';
-        panel.style.right    = '0';
-        panel.style.bottom   = '0';
-        panel.style.top      = 'auto';
-        panel.style.width    = '100%';
-        panel.style.maxWidth = '100%';
-        panel.style.borderRadius = '16px 16px 0 0';
-        panel.style.maxHeight = '82vh';
-        panel.style.overflowY = 'auto';
-        panel.style.paddingBottom = 'max(22px, env(safe-area-inset-bottom))';
-      } else {
-        // Desktop: dropdown below / above trigger
-        panel.style.position = 'fixed';
-        panel.style.bottom = '';
-        panel.style.right  = '';
-        panel.style.width  = '';
-        panel.style.maxWidth = '320px';
-        panel.style.borderRadius = '4px';
-        panel.style.maxHeight = '';
-        panel.style.overflowY = '';
-        panel.style.paddingBottom = '';
-        const rect = trigger.getBoundingClientRect();
-        const pw = panel.offsetWidth || 290;
-        const ph = panel.offsetHeight || 340;
-        const vh = window.innerHeight;
-        let left = rect.left, top = rect.bottom + 6;
-        if (left + pw > vw - 10) left = vw - pw - 10;
-        if (left < 10) left = 10;
-        if (top + ph > vh - 10) top = rect.top - ph - 6;
-        if (top < 10) top = 10;
-        panel.style.left = left + 'px';
-        panel.style.top  = top  + 'px';
-      }
+      const rect = trigger.getBoundingClientRect();
+      const pw = panel.offsetWidth || 290;
+      const ph = panel.offsetHeight || 340;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      let left = rect.left, top = rect.bottom + 6;
+      if (left + pw > vw - 10) left = vw - pw - 10;
+      if (left < 10) left = 10;
+      if (top + ph > vh - 10) top = rect.top - ph - 6;
+      if (top < 10) top = 10;
+      panel.style.left = left + 'px';
+      panel.style.top  = top  + 'px';
     }
 
     // ── CALENDAR ──

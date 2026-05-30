@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Wedding Invitation</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lato:wght@100;300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lato:wght@100;300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -126,23 +126,6 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
 .inv-cell-lbl  { font-family:'Lato',sans-serif; font-size:.5rem; letter-spacing:.38em; text-transform:uppercase; color:var(--accent-d); opacity:.9; margin-bottom:7px; }
 .inv-cell-val  { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--name-col); line-height:1.5; }
 .inv-footer-t  { font-family:'Lato',sans-serif; font-size:.54rem; letter-spacing:.35em; text-transform:uppercase; color:var(--accent-d); opacity:.7; margin-top:28px; }
-
-/* ── ARABIC SUPPORT ── */
-.arabic {
-  font-family: 'Amiri', serif !important;
-  direction: rtl;
-  letter-spacing: 0 !important; /* Arabic doesn't use letter-spacing */
-  font-style: normal !important;
-}
-.arabic.inv-names  { font-size: clamp(2.2rem, 6.5vw, 3.6rem) !important; font-weight: 700 !important; line-height: 1.3 !important; }
-.arabic.inv-amp    { font-size: clamp(1.8rem, 5vw, 2.8rem) !important; font-style: normal !important; }
-.arabic.inv-message { font-size: 1.15rem !important; line-height: 2.2 !important; font-style: normal !important; }
-.arabic.inv-cell-val { font-size: 1.1rem !important; line-height: 1.8 !important; }
-.arabic.hero-names  { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; line-height: 1.2 !important; }
-.arabic.hero-date-text { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; }
-.arabic.together-quote { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; line-height: 1.9 !important; }
-.arabic.detail-value { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-size: clamp(1.1rem, 3vw, 1.8rem) !important; font-style: normal !important; }
-.arabic.close-big { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; line-height: 1.6 !important; }
 
 /* ── DETAILS ── */
 #section-details { position:relative; z-index:10; padding:100px 40px; max-width:900px; margin:0 auto; }
@@ -577,15 +560,12 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
 }
 
 @media print {
-  /* ── Page setup ──
-     Note: @page size is ignored by most mobile browsers (iOS Safari, Chrome Android).
-     We use block-flow layout instead of position:fixed so mobile print engines
-     render the full card correctly at whatever page size the device uses. */
-  @page { margin: 8mm; }
+  /* ── Page setup ── */
+  @page { margin: 0; size: A4 portrait; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 
   /* Hide everything except the card */
-  html, body { margin: 0 !important; padding: 0 !important; }
+  html, body { margin: 0 !important; padding: 0 !important; height: 100% !important; }
   body { background: #fdf8f0 !important; cursor: auto; }
 
   #starfield, .petals, #cursor, #cursor-ring, #progress-bar,
@@ -593,13 +573,12 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
   #section-close, .sec-div, .hero-scroll-hint, #secret-hint,
   #section-special, .shine, .action-row { display: none !important; }
 
-  /* Card section: normal block flow — works on all print engines including mobile */
+  /* Card section: full A4 page */
   #section-card {
     display: block !important;
-    position: static !important;
-    width: 100% !important;
-    min-height: 0 !important;
-    padding: 0 !important;
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 48px !important;
     margin: 0 !important;
     background: #fdf8f0 !important;
   }
@@ -607,34 +586,36 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
   .card-wrap {
     perspective: none !important;
     width: 100% !important;
-    max-width: 100% !important;
-    display: block !important;
-  }
-
-  /* The invitation card — full width, auto height, centered content */
-  .invitation {
-    position: relative !important;
-    width: 100% !important;
+    height: 100% !important;
     max-width: 100% !important;
     display: flex !important;
-    flex-direction: column !important;
+    align-items: stretch !important;
     justify-content: center !important;
+  }
+
+  /* The invitation card — stretches to fill the full page */
+  .invitation {
+    position: relative !important;
+    flex: 1 !important;
+    max-width: 640px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-evenly !important;
     align-items: center !important;
-    gap: 0 !important;
-    padding: 10mm 12mm !important;
+    padding: 60px 72px !important;
     background: #fdf8f0 !important;
     box-shadow: none !important;
     transform: none !important;
     transform-style: flat !important;
-    border: 1px solid rgba(138,108,58,0.4) !important;
-    page-break-inside: avoid;
+    outline: 1px solid rgba(138,108,58,0.4);
+    outline-offset: -1px;
   }
 
   /* Inner double-border frame */
   .invitation::before {
     content: '';
     position: absolute;
-    top: 14px; right: 14px; bottom: 14px; left: 14px;
+    inset: 18px;
     border: 1px solid rgba(138,108,58,0.2);
     pointer-events: none;
   }
@@ -662,15 +643,15 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
   .inv-frame       { opacity: 0.18 !important; }
   .inv-frame-inner { opacity: 0.08 !important; }
 
-  /* Typography — print-safe dark colors */
-  .inv-eyebrow  { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 14px !important; }
-  .inv-names    { color: #1a1005 !important; font-size: clamp(2rem, 8vw, 3.2rem) !important; }
-  .inv-amp      { color: #c9a96e !important; font-size: clamp(1.6rem, 6vw, 2.6rem) !important; }
-  .inv-divider  { margin: 18px auto !important; }
-  .inv-message  { color: #4a3820 !important; opacity: 1 !important; font-size: 1rem !important; line-height: 1.8 !important; margin-bottom: 0 !important; }
-  .inv-grid     { margin: 0 auto !important; gap: 20px !important; }
-  .inv-cell-lbl { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 6px !important; }
-  .inv-cell-val { color: #1a1005 !important; font-size: 1rem !important; }
+  /* Typography — print-safe dark colors, slightly larger to fill space */
+  .inv-eyebrow  { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 20px !important; }
+  .inv-names    { color: #1a1005 !important; font-size: 3.6rem !important; }
+  .inv-amp      { color: #c9a96e !important; font-size: 3rem !important; }
+  .inv-divider  { margin: 32px auto !important; }
+  .inv-message  { color: #4a3820 !important; opacity: 1 !important; font-size: 1.1rem !important; line-height: 2 !important; margin-bottom: 0 !important; }
+  .inv-grid     { margin: 0 auto !important; gap: 32px !important; }
+  .inv-cell-lbl { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 10px !important; }
+  .inv-cell-val { color: #1a1005 !important; font-size: 1.1rem !important; }
 
   /* Divider lines */
   .inv-div-line { background: #c9a96e !important; opacity: 0.5 !important; }
@@ -878,7 +859,7 @@ body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', san
   <div class="close-big reveal d1" id="close-names-big">James &amp; Sofia</div>
   <div class="close-sub reveal d2">We cannot wait to celebrate with you</div>
   <div class="action-row reveal d3">
-    <button class="btn primary" id="printBtn">&#128424; &nbsp;Print Invitation</button>
+    <button class="btn primary" onclick="window.focus(); setTimeout(() => window.print(), 0);">&#128424; &nbsp;Print Invitation</button>
   </div>
 </section>
 
@@ -916,66 +897,17 @@ function parseFormattedDate(s) {
 document.body.setAttribute('data-theme', theme);
 document.title = man + ' & ' + woman + ' \u2014 Wedding Invitation';
 
-// ── ARABIC DETECTION & FONT HELPER ──
-// Detects if a string contains Arabic characters and applies Amiri font + RTL
-function hasArabic(str) {
-  return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str);
-}
-function applyArabic(el, text) {
-  if (!el) return;
-  if (hasArabic(text)) {
-    el.classList.add('arabic');
-    el.setAttribute('dir', 'rtl');
-    el.setAttribute('lang', 'ar');
-  } else {
-    el.classList.remove('arabic');
-    el.removeAttribute('dir');
-    el.removeAttribute('lang');
-  }
-}
-
 ['hero-man','hero-woman','card-man','card-woman'].forEach(id => {
   const el = document.getElementById(id);
-  if (el) {
-    el.textContent = id.endsWith('-man') ? man : woman;
-    applyArabic(el, id.endsWith('-man') ? man : woman);
-  }
+  if (el) el.textContent = id.endsWith('-man') ? man : woman;
 });
-
-// Names wrapper elements also need RTL when Arabic
-const heroNamesEl = document.querySelector('.hero-names');
-if (heroNamesEl && (hasArabic(man) || hasArabic(woman))) {
-  heroNamesEl.classList.add('arabic');
-  heroNamesEl.setAttribute('dir', 'rtl');
-}
-const cardNamesEl = document.querySelector('.inv-names');
-if (cardNamesEl && (hasArabic(man) || hasArabic(woman))) {
-  cardNamesEl.classList.add('arabic');
-  cardNamesEl.setAttribute('dir', 'rtl');
-}
-
-const closeNamesEl = document.getElementById('close-names-big');
-if (closeNamesEl) {
-  closeNamesEl.innerHTML = man + ' &amp; ' + woman;
-  if (hasArabic(man) || hasArabic(woman)) {
-    closeNamesEl.classList.add('arabic');
-    closeNamesEl.setAttribute('dir', 'rtl');
-  }
-}
+document.getElementById('close-names-big').innerHTML = man + ' &amp; ' + woman;
 
 if (dateS) {
-  const heroDateEl = document.getElementById('hero-date-display');
-  heroDateEl.textContent = dateS;
-  applyArabic(heroDateEl, dateS);
-  ['card-date','detail-date'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.textContent = dateS; applyArabic(el, dateS); }
-  });
+  document.getElementById('hero-date-display').textContent = dateS;
+  ['card-date','detail-date'].forEach(id => document.getElementById(id).textContent = dateS);
 }
-if (timeS) ['card-time','detail-time'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) { el.textContent = timeS; applyArabic(el, timeS); }
-});
+if (timeS) ['card-time','detail-time'].forEach(id => document.getElementById(id).textContent = timeS);
 
 // Show today's date/time as a subtle footer line on the invitation card
 if (todayDateS || todayTimeS) {
@@ -1026,34 +958,15 @@ if (venue || textLocation) {
 
   document.getElementById('card-venue').innerHTML = cardVenueHTML;
   document.getElementById('detail-venue').innerHTML = detailVenueHTML;
-  // Apply Arabic if venue text is Arabic
-  const venueText = textLocation || venue;
-  if (hasArabic(venueText)) {
-    ['card-venue','detail-venue'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.classList.add('arabic'); el.setAttribute('dir','rtl'); el.setAttribute('lang','ar'); }
-    });
-  }
-if (msg) {
-  const msgEl = document.getElementById('card-message');
-  msgEl.textContent = msg;
-  applyArabic(msgEl, msg);
 }
+if (msg) document.getElementById('card-message').textContent = msg;
 
 // Together quote
 const quoteText = (msg || 'joyfully invite you to celebrate the beginning of their forever');
 const qEl = document.getElementById('together-quote');
-if (hasArabic(quoteText)) {
-  // Arabic: don't split into per-word spans (breaks RTL joining), animate whole block
-  qEl.textContent = quoteText;
-  qEl.classList.add('arabic');
-  qEl.setAttribute('dir', 'rtl');
-  qEl.setAttribute('lang', 'ar');
-} else {
-  qEl.innerHTML = quoteText.split(' ').map((w,i) =>
-    '<span style="transition-delay:' + (i * 0.065) + 's">' + w + '</span>'
-  ).join(' ');
-}
+qEl.innerHTML = quoteText.split(' ').map((w,i) =>
+  '<span style="transition-delay:' + (i * 0.065) + 's">' + w + '</span>'
+).join(' ');
 
 // ── SPECIAL DATA ──
 // specialData is now an array: [{msg, photos, code}, ...]
@@ -1101,9 +1014,7 @@ if (specialNotes && specialNotes.length > 0) {
 
       // Populate content
       if (matched.msg) {
-        const specialMsgEl = document.getElementById('specialMsgText');
-        specialMsgEl.textContent = matched.msg;
-        applyArabic(specialMsgEl, matched.msg);
+        document.getElementById('specialMsgText').textContent = matched.msg;
         document.getElementById('specialMsgCard').style.display = 'block';
       }
 
@@ -1302,117 +1213,6 @@ const cardIo = new IntersectionObserver(entries => {
   entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.18 });
 cardIo.observe(document.getElementById('cardWrap'));
-
-// ── PRINT BUTTON ──
-// On desktop: window.print() works fine.
-// On mobile: browsers block window.print() from button clicks reliably,
-// so we show a friendly instruction sheet instead.
-(function() {
-  const btn = document.getElementById('printBtn');
-  if (!btn) return;
-
-  // Mobile print instruction overlay
-  function showMobilePrintGuide() {
-    const overlay = document.createElement('div');
-    overlay.id = 'mobilePrintOverlay';
-    overlay.style.cssText = [
-      'position:fixed','inset:0','z-index:9999',
-      'background:rgba(10,7,2,0.82)','backdrop-filter:blur(6px)',
-      'display:flex','align-items:flex-end','justify-content:center',
-      'padding:0 0 env(safe-area-inset-bottom,0) 0',
-      'animation:overlayIn 0.28s ease'
-    ].join(';');
-
-    const sheet = document.createElement('div');
-    sheet.style.cssText = [
-      'background:#1e1608','border:1px solid rgba(201,169,110,0.28)',
-      'border-top:1px solid rgba(201,169,110,0.5)',
-      'border-radius:16px 16px 0 0',
-      'padding:28px 24px 36px','width:100%','max-width:480px',
-      'font-family:"Lato",sans-serif','color:var(--accent-xl)',
-      'animation:sheetUp 0.32s cubic-bezier(0.22,1,0.36,1)'
-    ].join(';');
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isAndroid = /Android/.test(navigator.userAgent);
-
-    let stepsHTML = '';
-    if (isIOS) {
-      stepsHTML = `
-        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">1.</span>
-          <span>Tap the <strong style="color:var(--accent-l)">Share</strong> button <span style="font-size:1.1em">⎙</span> at the bottom of your browser</span>
-        </div>
-        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">2.</span>
-          <span>Scroll down and tap <strong style="color:var(--accent-l)">Print</strong></span>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">3.</span>
-          <span>Choose your printer or save as PDF</span>
-        </div>`;
-    } else if (isAndroid) {
-      stepsHTML = `
-        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">1.</span>
-          <span>Tap the browser <strong style="color:var(--accent-l)">Menu ⋮</strong> (top right)</span>
-        </div>
-        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">2.</span>
-          <span>Tap <strong style="color:var(--accent-l)">Share</strong> or <strong style="color:var(--accent-l)">Print</strong></span>
-        </div>
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">3.</span>
-          <span>Select your printer or <strong style="color:var(--accent-l)">Save as PDF</strong></span>
-        </div>`;
-    } else {
-      stepsHTML = `
-        <div style="display:flex;gap:12px;align-items:flex-start">
-          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">→</span>
-          <span>Use your browser menu and select <strong style="color:var(--accent-l)">Print</strong> or press <strong style="color:var(--accent-l)">Ctrl+P</strong> / <strong style="color:var(--accent-l)">Cmd+P</strong></span>
-        </div>`;
-    }
-
-    sheet.innerHTML = `
-      <div style="width:40px;height:4px;background:rgba(201,169,110,0.3);border-radius:2px;margin:0 auto 24px"></div>
-      <div style="font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);opacity:0.8;margin-bottom:8px">Print Invitation</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2rem;color:var(--accent-l);margin-bottom:24px;line-height:1.4">To print, follow these steps:</div>
-      <div style="font-size:0.9rem;line-height:1.7;color:rgba(245,237,216,0.85);margin-bottom:28px">${stepsHTML}</div>
-      <button id="closeMobilePrint" style="width:100%;padding:15px;background:none;border:1px solid rgba(201,169,110,0.3);border-radius:2px;color:var(--accent);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer">Got it</button>
-    `;
-
-    overlay.appendChild(sheet);
-    document.body.appendChild(overlay);
-
-    document.getElementById('closeMobilePrint').addEventListener('click', () => overlay.remove());
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-  }
-
-  btn.addEventListener('click', function() {
-    if (isTouchDevice) {
-      // Try window.print() first — it works on some Android browsers
-      // If it doesn't fire within a short time, show the guide
-      let printed = false;
-      window.addEventListener('afterprint', function onAP() {
-        printed = true;
-        window.removeEventListener('afterprint', onAP);
-      }, { once: true });
-      try { window.print(); } catch(e) {}
-      // Give it 600ms; if afterprint never fires, show the guide
-      setTimeout(() => { if (!printed) showMobilePrintGuide(); }, 600);
-    } else {
-      window.print();
-    }
-  });
-
-  // Inject keyframe animations
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes overlayIn { from{opacity:0} to{opacity:1} }
-    @keyframes sheetUp   { from{transform:translateY(100%)} to{transform:translateY(0)} }
-  `;
-  document.head.appendChild(style);
-})();
 </script>
 </body>
 </html>
