@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Invitation — Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #c9a96e;
+    --gold-light: #e8d5a3;
+    --gold-dark: #8a6c3a;
+    --cream: #fdf8f0;
+    --deep: #1a1208;
+    --parchment: #f5edd8;
+    --rose: #b5808a;
+  }
+
+  body {
+    background: var(--deep);
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 20px 80px;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(201,169,110,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(181,128,138,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .particles { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .particle {
+    position: absolute;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-up linear infinite;
+  }
+  @keyframes float-up {
+    0%   { opacity: 0; transform: translateY(100vh) scale(0) rotate(0deg); }
+    10%  { opacity: 0.5; }
+    90%  { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(-40px) scale(1) rotate(360deg); }
+  }
+
+  .header {
+    position: relative; z-index: 1;
+    text-align: center;
+    margin-bottom: 52px;
+    animation: headerIn 1s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes headerIn {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .site-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    opacity: 0.55;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  h1.site-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--gold-light);
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+    text-shadow: 0 0 60px rgba(201,169,110,0.3);
+  }
+
+  .site-sub {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.4;
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 auto 52px;
+    max-width: 240px;
+    position: relative; z-index: 1;
+    opacity: 0;
+    animation: fadeSlide 0.8s 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: scaleX(0.6); }
+    to   { opacity: 1; transform: scaleX(1); }
+  }
+  .ornament-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--gold-dark)); opacity: 0.5; }
+  .ornament-line.r { background: linear-gradient(to left, transparent, var(--gold-dark)); }
+  .ornament-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); opacity: 0.7; }
+
+  .editor {
+    background: rgba(255,255,255,0.028);
+    border: 1px solid rgba(201,169,110,0.16);
+    border-top: 1px solid rgba(201,169,110,0.28);
+    border-radius: 3px;
+    padding: 44px 48px;
+    width: 100%;
+    max-width: 560px;
+    position: relative; z-index: 1;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    opacity: 0;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5), inset 0 1px 0 rgba(201,169,110,0.12);
+    animation: cardIn 0.9s 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .editor::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background: linear-gradient(135deg, rgba(201,169,110,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .editor-title {
+    font-family: 'Cinzel', serif;
+    color: var(--gold);
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+    text-align: center;
+    opacity: 0.8;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+  }
+
+  label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.65;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  label .dot {
+    width: 3px; height: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  /* ── CUSTOM DATE / TIME PICKERS ── */
+
+  .picker-trigger {
+    background: rgba(201,169,110,0.04);
+    border: 1px solid rgba(201,169,110,0.12);
+    border-bottom: 1px solid rgba(201,169,110,0.32);
+    border-radius: 2px 2px 0 0;
+    padding: 13px 15px 11px;
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.08rem;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.35s, background 0.35s, box-shadow 0.35s;
+    user-select: none;
+    min-height: 48px;
+  }
+  .picker-trigger:hover, .picker-trigger.open {
+    border-bottom-color: var(--gold);
+    background: rgba(201,169,110,0.07);
+    box-shadow: 0 6px 24px rgba(201,169,110,0.05);
+  }
+  .picker-trigger .placeholder { color: rgba(253,248,240,0.25); font-style: italic; font-size: 0.95rem; }
+  .picker-trigger .chevron { font-size: 0.6rem; opacity: 0.45; transition: transform 0.25s; flex-shrink: 0; margin-left: 8px; }
+  .picker-trigger.open .chevron { transform: rotate(180deg); }
+
+  .picker-backdrop {
+    position: fixed; inset: 0; z-index: 900;
+    background: rgba(10,7,2,0.55);
+    backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .picker-backdrop.visible { opacity: 1; pointer-events: all; }
+
+  .picker-panel {
+    position: fixed;
+    z-index: 910;
+    background: #1e1608;
+    border: 1px solid rgba(201,169,110,0.22);
+    border-top: 1px solid rgba(201,169,110,0.42);
+    border-radius: 4px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(201,169,110,0.1);
+    padding: 22px;
+    min-width: 280px;
+    max-width: 320px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(8px) scale(0.97);
+    transition: opacity 0.22s, transform 0.22s;
+  }
+  .picker-panel.visible { opacity: 1; pointer-events: all; transform: translateY(0) scale(1); }
+
+  @media (max-width: 600px) {
+    .picker-panel {
+      transform: translateY(100%);
+      min-width: 0;
+      max-width: 100%;
+      border-radius: 16px 16px 0 0;
+      padding: 0 22px 22px;
+    }
+    .picker-panel::before {
+      content: '';
+      display: block;
+      width: 40px; height: 4px;
+      background: rgba(201,169,110,0.3);
+      border-radius: 2px;
+      margin: 16px auto 18px;
+    }
+    .picker-panel.visible { transform: translateY(0); }
+  }
+
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-nav {
+    background: none; border: none; color: var(--gold); cursor: pointer;
+    font-size: 1rem; opacity: 0.6; width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; transition: background 0.18s, opacity 0.18s;
+  }
+  .cal-nav:hover { background: rgba(201,169,110,0.12); opacity: 1; }
+  .cal-month-label {
+    font-family: 'Cinzel', serif; font-size: 0.68rem;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold-light); opacity: 0.85;
+  }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-dow {
+    font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.4; text-align: center; padding: 0 0 6px;
+  }
+  .cal-day {
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 0.88rem;
+    color: var(--cream); opacity: 0.75; border-radius: 50%; cursor: pointer;
+    transition: background 0.18s, opacity 0.18s; border: none; background: none;
+  }
+  .cal-day:hover { background: rgba(201,169,110,0.14); opacity: 1; }
+  .cal-day.today { border: 1px solid rgba(201,169,110,0.35); opacity: 0.9; }
+  .cal-day.selected { background: var(--gold); color: var(--deep); opacity: 1; font-weight: 600; }
+  .cal-day.empty { pointer-events: none; opacity: 0; }
+
+  .time-drum-wrap {
+    display: flex; align-items: center; gap: 8px;
+    justify-content: center; margin-top: 4px;
+  }
+  .drum-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .drum-label {
+    font-size: 0.46rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.45; margin-bottom: 2px;
+  }
+  .drum {
+    width: 64px; height: 200px; overflow: hidden; position: relative;
+    border: 1px solid rgba(201,169,110,0.16); border-radius: 6px;
+    cursor: grab; background: rgba(0,0,0,0.3); touch-action: none;
+  }
+  .drum:active { cursor: grabbing; }
+  .drum::before, .drum::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 48px; z-index: 2; pointer-events: none;
+  }
+  .drum::before { top: 0; background: linear-gradient(to bottom, #1e1608 0%, transparent 100%); }
+  .drum::after  { bottom: 0; background: linear-gradient(to top, #1e1608 0%, transparent 100%); }
+  .drum-stripe {
+    position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+    height: 40px; z-index: 1;
+    border-top: 1px solid rgba(201,169,110,0.35); border-bottom: 1px solid rgba(201,169,110,0.35);
+    background: rgba(201,169,110,0.07); pointer-events: none;
+  }
+  .drum-list { position: absolute; left: 0; right: 0; top: 0; }
+  .drum-item {
+    height: 40px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+    color: var(--cream); opacity: 0.3; user-select: none;
+    transition: opacity 0.12s;
+  }
+  .drum-item.selected { opacity: 1; font-size: 1.45rem; }
+  .drum-sep {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+    color: var(--gold); opacity: 0.5; margin-top: 22px;
+  }
+  .ampm-col { display: flex; flex-direction: column; gap: 6px; margin-top: 22px; }
+  .ampm-btn {
+    width: 42px; padding: 7px 0;
+    background: rgba(201,169,110,0.06); border: 1px solid rgba(201,169,110,0.14);
+    border-radius: 3px; color: var(--cream); font-family: 'Cinzel', serif;
+    font-size: 0.62rem; letter-spacing: 0.18em; cursor: pointer; opacity: 0.45;
+    transition: background 0.18s, opacity 0.18s;
+  }
+  .ampm-btn.active { background: rgba(201,169,110,0.2); border-color: rgba(201,169,110,0.45); opacity: 1; }
+
+  .picker-confirm {
+    margin-top: 18px; width: 100%; padding: 10px; background: none;
+    border: 1px solid rgba(201,169,110,0.3); border-radius: 2px;
+    color: var(--gold); font-family: 'Cinzel', serif;
+    font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase;
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  }
+  .picker-confirm:hover { background: rgba(201,169,110,0.1); border-color: rgba(201,169,110,0.55); }
+
+  input[type="text"], input[type="date"], textarea {
+    background: rgba(201,169,110,0.04);
+    border: 1px solid rgba(201,169,110,0.12);
+    border-bottom: 1px solid rgba(201,169,110,0.32);
+    border-radius: 2px 2px 0 0;
+    padding: 13px 15px 11px;
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.08rem;
+    outline: none;
+    transition: border-color 0.35s, background 0.35s, box-shadow 0.35s;
+    width: 100%;
+  }
+  input:focus, textarea:focus {
+    border-color: rgba(201,169,110,0.22);
+    border-bottom-color: var(--gold);
+    background: rgba(201,169,110,0.07);
+    box-shadow: 0 6px 24px rgba(201,169,110,0.05);
+  }
+  input::placeholder, textarea::placeholder { color: rgba(253,248,240,0.25); font-style: italic; font-size: 0.95rem; }
+
+  /* Arabic input auto-styling */
+  input.arabic-input, textarea.arabic-input {
+    font-family: 'Amiri', serif;
+    direction: rtl;
+    font-size: 1.18rem;
+    letter-spacing: 0;
+  }
+
+
+
+
+  .field::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%;
+    width: 0; height: 1.5px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+    transition: width 0.4s cubic-bezier(0.22,1,0.36,1), left 0.4s cubic-bezier(0.22,1,0.36,1);
+    pointer-events: none;
+    z-index: 2;
+  }
+  .field:focus-within::after { width: 100%; left: 0; }
+
+  textarea { resize: vertical; min-height: 88px; line-height: 1.75; }
+
+  .full-row { margin-bottom: 20px; }
+
+  /* Theme selector */
+  .theme-section { margin-bottom: 32px; }
+  .theme-label { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); opacity: 0.65; margin-bottom: 14px; }
+  .theme-row { display: flex; gap: 14px; align-items: center; }
+  .theme-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 2.5px solid transparent;
+    cursor: pointer; transition: transform 0.22s, border-color 0.22s, box-shadow 0.22s;
+    position: relative;
+  }
+  .theme-btn::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .theme-btn:hover { transform: scale(1.18); }
+  .theme-btn.active { border-color: rgba(255,255,255,0.7); transform: scale(1.18); box-shadow: 0 0 14px rgba(201,169,110,0.4); }
+  .theme-btn.active::after { border-color: rgba(201,169,110,0.3); }
+  .theme-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--gold-light);
+    font-size: 0.9rem;
+    opacity: 0.6;
+    margin-left: auto;
+    transition: opacity 0.2s;
+  }
+
+  /* ── SPECIAL SECTION ── */
+  .special-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 36px 0 28px;
+  }
+  .special-divider-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(181,128,138,0.5)); }
+  .special-divider-line.r { background: linear-gradient(to left, transparent, rgba(181,128,138,0.5)); }
+  .special-divider-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #d4a0a8;
+    opacity: 0.8;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Add note button */
+  .add-note-btn {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(181,128,138,0.15);
+    border: 1px solid rgba(181,128,138,0.4);
+    color: #e8c0c8;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+  .add-note-btn:hover { background: rgba(181,128,138,0.3); transform: scale(1.12); }
+
+  /* Note entries container */
+  #noteEntries { display: flex; flex-direction: column; gap: 20px; margin-bottom: 20px; }
+
+  .note-entry {
+    background: rgba(181,128,138,0.06);
+    border: 1px solid rgba(181,128,138,0.18);
+    border-top: 1px solid rgba(181,128,138,0.32);
+    border-radius: 3px;
+    padding: 22px 22px 18px;
+    position: relative;
+    animation: noteIn 0.4s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes noteIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .note-entry::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 3px;
+    background: linear-gradient(135deg, rgba(181,128,138,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .note-entry-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .note-entry-icon { font-size: 1rem; opacity: 0.65; }
+  .note-entry-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #d4a0a8;
+    opacity: 0.9;
+    flex: 1;
+  }
+  .note-entry-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #d4a0a8;
+    opacity: 0.45;
+  }
+  .remove-entry-btn {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(181,128,138,0.1);
+    border: 1px solid rgba(181,128,138,0.25);
+    color: #e8c0c8;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, opacity 0.2s;
+    opacity: 0.5;
+    line-height: 1;
+  }
+  .remove-entry-btn:hover { background: rgba(181,128,138,0.3); opacity: 1; }
+
+  .note-field {
+    margin-bottom: 14px;
+  }
+  .note-field label {
+    color: #d4a0a8;
+    margin-bottom: 6px;
+    display: flex;
+  }
+  .note-field textarea {
+    border-bottom-color: rgba(181,128,138,0.4);
+    min-height: 72px;
+    font-size: 1rem;
+  }
+  .note-field textarea:focus { border-bottom-color: #d4a0a8; }
+  .note-field .field::after {
+    background: linear-gradient(90deg, #8a5060, #d4a0a8, #e8c0c8);
+  }
+
+  /* Photo upload */
+  .photo-upload-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #d4a0a8;
+    opacity: 0.65;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .photo-slots {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .photo-slot {
+    width: 80px; height: 80px;
+    border: 1.5px dashed rgba(181,128,138,0.3);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, background 0.25s;
+    background: rgba(181,128,138,0.04);
+  }
+  .photo-slot:hover { border-color: rgba(181,128,138,0.6); background: rgba(181,128,138,0.08); }
+  .photo-slot.has-image { border-color: rgba(181,128,138,0.5); border-style: solid; }
+  .photo-slot-icon { font-size: 1.2rem; opacity: 0.3; margin-bottom: 3px; }
+  .photo-slot-text { font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase; color: #d4a0a8; opacity: 0.5; }
+  .photo-slot img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+  }
+  .photo-slot .remove-btn {
+    position: absolute; top: 3px; right: 3px;
+    width: 16px; height: 16px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 2;
+    border: none;
+    line-height: 1;
+  }
+  .photo-slot.has-image:hover .remove-btn { opacity: 1; }
+  input[type="file"] { display: none; }
+
+  .photo-hint {
+    font-size: 0.48rem;
+    letter-spacing: 0.16em;
+    color: #d4a0a8;
+    opacity: 0.32;
+    font-family: 'Lato', sans-serif;
+  }
+
+  /* Code display */
+  .code-preview {
+    display: none;
+    margin-top: 14px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(181,128,138,0.25);
+    border-radius: 3px;
+    padding: 12px 16px;
+    align-items: center;
+    gap: 12px;
+  }
+  .code-preview.visible { display: flex; }
+  .code-label-small {
+    font-size: 0.48rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: #d4a0a8;
+    opacity: 0.7;
+    white-space: nowrap;
+  }
+  .code-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    color: #e8c0c8;
+    letter-spacing: 0.25em;
+    flex: 1;
+    text-align: center;
+  }
+  .copy-code-btn {
+    background: rgba(181,128,138,0.15);
+    border: 1px solid rgba(181,128,138,0.3);
+    color: #d4a0a8;
+    padding: 5px 12px;
+    border-radius: 2px;
+    font-size: 0.48rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .copy-code-btn:hover { background: rgba(181,128,138,0.28); }
+
+  /* Buttons */
+  .generate-btn {
+    width: 100%;
+    padding: 17px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold), #e8c87a, var(--gold));
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 2px;
+    color: var(--deep);
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s;
+    animation: gradientShift 4s ease infinite;
+    box-shadow: 0 4px 28px rgba(201,169,110,0.22);
+    margin-bottom: 14px;
+  }
+  .generate-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.13);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  @keyframes gradientShift {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  .generate-btn:hover::before { opacity: 1; }
+  .generate-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 44px rgba(201,169,110,0.38); }
+  .generate-btn:active { transform: translateY(0); box-shadow: 0 4px 16px rgba(201,169,110,0.18); }
+
+  .generate-special-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #8a5060, #b5717f, #d4a0a8, #b5717f);
+    background-size: 300% 300%;
+    border: none;
+    border-radius: 2px;
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.28s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s;
+    animation: gradientShiftRose 5s ease infinite;
+    box-shadow: 0 4px 28px rgba(181,113,127,0.22);
+  }
+  @keyframes gradientShiftRose {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  .generate-special-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(181,113,127,0.38); }
+  .generate-special-btn:active { transform: translateY(0); }
+
+  .footer-note {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    opacity: 0.3;
+    position: relative; z-index: 1;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 36px 14px 60px; }
+    .header { margin-bottom: 32px; }
+    .ornament { margin-bottom: 32px; }
+    .editor { padding: 28px 18px 32px; }
+    .editor-title { margin-bottom: 24px; }
+    .field-row { grid-template-columns: 1fr; gap: 16px; }
+    .full-row { margin-bottom: 16px; }
+
+    /* Bigger touch targets for inputs */
+    input[type="text"], input[type="date"], textarea {
+      padding: 15px 14px 13px;
+      font-size: 1rem;
+    }
+
+    /* Theme row wrapping */
+    .theme-row { flex-wrap: wrap; gap: 12px; }
+    .theme-name { width: 100%; margin-left: 0; text-align: center; }
+
+    /* Bigger theme buttons */
+    .theme-btn { width: 42px; height: 42px; }
+
+    /* Photo slots: fill width on mobile */
+    .photo-slots { justify-content: flex-start; gap: 8px; }
+    .photo-slot { width: 72px; height: 72px; }
+
+    /* Note entries */
+    .note-entry { padding: 18px 14px 14px; }
+
+    /* Make remove/add buttons easier to tap */
+    .remove-entry-btn { width: 28px; height: 28px; font-size: 0.8rem; }
+    .add-note-btn { width: 28px; height: 28px; font-size: 1.1rem; }
+
+    /* Code preview stacks nicely */
+    .code-preview { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+    .code-value { min-width: 100%; text-align: left; }
+
+    /* Bigger generate buttons */
+    .generate-btn { padding: 18px; font-size: 0.68rem; }
+    .generate-special-btn { padding: 17px; }
+
+    /* Reduce particle count via opacity — JS still runs but less visible */
+    .particles { opacity: 0.4; }
+  }
+
+  /* Prevent hover states sticking on touch devices */
+  @media (hover: none) {
+    .generate-btn:hover { transform: none; box-shadow: 0 4px 28px rgba(201,169,110,0.22); }
+    .generate-special-btn:hover { transform: none; box-shadow: 0 4px 28px rgba(181,113,127,0.22); }
+    .theme-btn:hover { transform: none; }
+    .add-note-btn:hover { transform: none; }
+    .photo-slot:hover { border-color: rgba(181,128,138,0.3); background: rgba(181,128,138,0.04); }
+    /* Show remove button on touch always (no hover to reveal it) */
+    .photo-slot.has-image .remove-btn { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<header class="header">
+  <div class="site-eyebrow">Bespoke · Elegant · Timeless</div>
+  <h1 class="site-title">Wedding<br>Invitations</h1>
+  <p class="site-sub">Craft your perfect invitation</p>
+</header>
+
+<div class="ornament">
+  <div class="ornament-line"></div>
+  <div class="ornament-diamond"></div>
+  <div class="ornament-line r"></div>
+</div>
+
+<div class="editor">
+  <div class="editor-title">✦ Invitation Details ✦</div>
+
+  <div class="field-row">
+    <div class="field">
+      <label><span class="dot"></span>His Name</label>
+      <input type="text" id="nameMan" placeholder="e.g. James" />
+    </div>
+    <div class="field">
+      <label><span class="dot"></span>Her Name</label>
+      <input type="text" id="nameWoman" placeholder="e.g. Sofia" />
+    </div>
+  </div>
+
+  <!-- TODAY'S DATE -->
+  <div class="field-row">
+    <div class="field">
+      <label><span class="dot"></span>Today's Date</label>
+      <div class="picker-trigger" id="todayDateTrigger" onclick="openPicker('todayDate','date',this)">
+        <span class="picker-val placeholder">Select date</span>
+        <span class="chevron">▼</span>
+      </div>
+      <input type="hidden" id="todayDate" />
+    </div>
+    <div class="field">
+      <label><span class="dot"></span>Today's Time</label>
+      <div class="picker-trigger" id="todayTimeTrigger" onclick="openPicker('todayTime','time',this)">
+        <span class="picker-val placeholder">Select time</span>
+        <span class="chevron">▼</span>
+      </div>
+      <input type="hidden" id="todayTime" />
+    </div>
+  </div>
+
+  <!-- CEREMONY DATE -->
+  <div class="field-row">
+    <div class="field">
+      <label><span class="dot"></span>Ceremony Date</label>
+      <div class="picker-trigger" id="ceremonyDateTrigger" onclick="openPicker('ceremonyDate','date',this)">
+        <span class="picker-val placeholder">Select date</span>
+        <span class="chevron">▼</span>
+      </div>
+      <input type="hidden" id="ceremonyDate" />
+    </div>
+    <div class="field">
+      <label><span class="dot"></span>Ceremony Time</label>
+      <div class="picker-trigger" id="ceremonyTimeTrigger" onclick="openPicker('ceremonyTime','time',this)">
+        <span class="picker-val placeholder">Select time</span>
+        <span class="chevron">▼</span>
+      </div>
+      <input type="hidden" id="ceremonyTime" />
+    </div>
+  </div>
+
+  <div class="full-row field">
+    <label><span class="dot"></span>Venue / Location</label>
+    <input type="text" id="venue" placeholder="e.g. The Grand Ballroom, Cairo" />
+    <div style="font-size:0.55rem;letter-spacing:0.2em;color:var(--gold);opacity:0.35;margin-top:6px;font-family:'Lato',sans-serif;">Paste a Google Maps link and it will become clickable in the invitation</div>
+  </div>
+
+  <div class="full-row field">
+    <label><span class="dot"></span>Text Location <span style="opacity:0.4;font-style:italic;letter-spacing:0.1em;text-transform:none;font-size:0.85em">(optional)</span></label>
+    <input type="text" id="textLocation" placeholder="e.g. 12 Rose Garden Lane, Hall B, 2nd Floor" />
+    <div style="font-size:0.55rem;letter-spacing:0.2em;color:var(--gold);opacity:0.35;margin-top:6px;font-family:'Lato',sans-serif;">Appears on the invitation · shown alongside or instead of the directions link</div>
+  </div>
+
+  <div class="full-row field">
+    <label><span class="dot"></span>Personal Message <span style="opacity:0.4;font-style:italic;letter-spacing:0.1em;text-transform:none;font-size:0.85em">(optional)</span></label>
+    <textarea id="message" placeholder="e.g. Together with their families, they joyfully invite you..."></textarea>
+  </div>
+
+  <div class="theme-section">
+    <div class="theme-label">Color Theme</div>
+    <div class="theme-row">
+      <div class="theme-btn active" data-theme="gold"  data-name="Gold"  style="background: linear-gradient(135deg,#c9a96e,#8a6c3a)" title="Gold"></div>
+      <div class="theme-btn"        data-theme="rose"  data-name="Rose"  style="background: linear-gradient(135deg,#d4a0a8,#8a5060)" title="Rose"></div>
+      <div class="theme-btn"        data-theme="sage"  data-name="Sage"  style="background: linear-gradient(135deg,#8aaa88,#4a6a48)" title="Sage"></div>
+      <div class="theme-btn"        data-theme="navy"  data-name="Navy"  style="background: linear-gradient(135deg,#6070a0,#2a3460)" title="Navy"></div>
+      <div class="theme-btn"        data-theme="blush" data-name="Blush" style="background: linear-gradient(135deg,#e8c4b8,#b07060)" title="Blush"></div>
+      <span class="theme-name" id="themeName">Gold</span>
+    </div>
+  </div>
+
+  <button class="generate-btn" id="generateBtn">✦ &nbsp; Reveal the Invitation &nbsp; ✦</button>
+
+  <!-- ══ SPECIAL SECTION ══ -->
+  <div class="special-divider">
+    <div class="special-divider-line"></div>
+    <div class="special-divider-label">
+      ✿ Special Notes
+      <button class="add-note-btn" id="addNoteBtn" title="Add another special note">+</button>
+    </div>
+    <div class="special-divider-line r"></div>
+  </div>
+
+  <!-- Note entries dynamically rendered here -->
+  <div id="noteEntries"></div>
+
+  <button class="generate-special-btn" id="generateSpecialBtn">✿ &nbsp; Generate Special Invitations &nbsp; ✿</button>
+
+</div>
+
+<p class="footer-note">Opens your invitation in a new window · Codes stored inside the invitation file</p>
+
+<script>
+  // Particles
+  const pc = document.getElementById('particles');
+  const isMobile = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const particleCount = isMobile ? 10 : 30;
+  for (let i = 0; i < particleCount; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2 + Math.random() * 3;
+    p.style.cssText = `left:${Math.random()*100}vw;width:${size}px;height:${size}px;animation-duration:${10+Math.random()*16}s;animation-delay:${Math.random()*14}s;`;
+    pc.appendChild(p);
+  }
+
+  // ── DRUM PICKER ──────────────────────────────────────────────────
+  // ── ARABIC LIVE DETECTION ──
+  // Automatically switches inputs/textareas to Amiri + RTL when Arabic is typed
+  function hasArabic(str) {
+    return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str);
+  }
+  function updateArabic(el) {
+    if (hasArabic(el.value)) {
+      el.classList.add('arabic-input');
+    } else {
+      el.classList.remove('arabic-input');
+    }
+  }
+  // Apply to all current and future text inputs / textareas
+  function watchInputs() {
+    document.querySelectorAll('input[type="text"], textarea').forEach(el => {
+      if (!el.dataset.arabicWatched) {
+        el.dataset.arabicWatched = '1';
+        el.addEventListener('input', () => updateArabic(el));
+        updateArabic(el); // check existing value
+      }
+    });
+  }
+  watchInputs();
+  // Re-run when note entries are added dynamically
+  const _origAddNote = window.addNoteEntry;
+
+  // Theme selector
+  let currentTheme = 'gold';
+  const themeNameEl = document.getElementById('themeName');
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTheme = btn.dataset.theme;
+      themeNameEl.textContent = btn.dataset.name;
+    });
+  });
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  // ── NOTE ENTRIES ──
+  let noteCount = 0;
+  // Each entry: { id, photos: [null,null,null] }
+  const entries = [];
+
+  function generateCode() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) {
+      if (i === 3) code += '-';
+      code += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return code;
+  }
+
+  function addNoteEntry() {
+    const id = ++noteCount;
+    const entryData = { id, photos: [null, null, null] };
+    entries.push(entryData);
+
+    const container = document.getElementById('noteEntries');
+    const div = document.createElement('div');
+    div.className = 'note-entry';
+    div.id = 'entry-' + id;
+    div.innerHTML = `
+      <div class="note-entry-header">
+        <span class="note-entry-icon">🔐</span>
+        <span class="note-entry-title">Secret Message</span>
+        <span class="note-entry-num">#${id}</span>
+        ${entries.length > 1 ? `<button class="remove-entry-btn" onclick="removeEntry(${id})" title="Remove this note">✕</button>` : ''}
+      </div>
+
+      <div class="note-field">
+        <div class="field">
+          <label><span class="dot" style="background:#d4a0a8"></span>Personal note to the guest</label>
+          <textarea id="specialMsg-${id}" placeholder="e.g. You mean the world to us. Save us the first dance! 💕"></textarea>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="photo-upload-label">✦ &nbsp; Upload Photos &nbsp; <span style="opacity:0.5;font-style:italic;font-family:'Cormorant Garamond',serif;font-size:0.85em;text-transform:none;letter-spacing:0.1em">(up to 3)</span></div>
+        <div class="photo-slots" id="photoSlots-${id}">
+          <div class="photo-slot" id="slot-${id}-0" onclick="triggerUpload(${id},0)">
+            <div class="photo-slot-icon">🌸</div>
+            <div class="photo-slot-text">Add photo</div>
+            <button class="remove-btn" onclick="removePhoto(event,${id},0)">✕</button>
+          </div>
+          <div class="photo-slot" id="slot-${id}-1" onclick="triggerUpload(${id},1)">
+            <div class="photo-slot-icon">🌸</div>
+            <div class="photo-slot-text">Add photo</div>
+            <button class="remove-btn" onclick="removePhoto(event,${id},1)">✕</button>
+          </div>
+          <div class="photo-slot" id="slot-${id}-2" onclick="triggerUpload(${id},2)">
+            <div class="photo-slot-icon">🌸</div>
+            <div class="photo-slot-text">Add photo</div>
+            <button class="remove-btn" onclick="removePhoto(event,${id},2)">✕</button>
+          </div>
+        </div>
+        <input type="file" id="fileInput-${id}-0" accept="image/*" onchange="handleFile(event,${id},0)">
+        <input type="file" id="fileInput-${id}-1" accept="image/*" onchange="handleFile(event,${id},1)">
+        <input type="file" id="fileInput-${id}-2" accept="image/*" onchange="handleFile(event,${id},2)">
+        <div class="photo-hint">Photos are compressed and embedded — no upload to any server</div>
+      </div>
+
+      <div class="code-preview" id="codePreview-${id}">
+        <div class="code-label-small">Secret Code</div>
+        <div class="code-value" id="codeDisplay-${id}">—</div>
+        <button class="copy-code-btn" onclick="copyCode(${id})">Copy</button>
+      </div>
+    `;
+    container.appendChild(div);
+    watchInputs(); // pick up new textarea in the note entry
+  }
+
+  function removeEntry(id) {
+    const idx = entries.findIndex(e => e.id === id);
+    if (idx !== -1) entries.splice(idx, 1);
+    const el = document.getElementById('entry-' + id);
+    if (el) el.remove();
+    // Re-number visually (update #N labels)
+    document.querySelectorAll('.note-entry-num').forEach((el, i) => {
+      el.textContent = '#' + (i + 1);
+    });
+    // Show/hide remove buttons
+    updateRemoveBtns();
+  }
+
+  function updateRemoveBtns() {
+    const allEntries = document.querySelectorAll('.note-entry');
+    allEntries.forEach(entry => {
+      const btn = entry.querySelector('.remove-entry-btn');
+      if (allEntries.length > 1) {
+        if (!btn) {
+          // Add it
+          const header = entry.querySelector('.note-entry-header');
+          const numEl = header.querySelector('.note-entry-num');
+          const id = parseInt(entry.id.replace('entry-',''));
+          const newBtn = document.createElement('button');
+          newBtn.className = 'remove-entry-btn';
+          newBtn.title = 'Remove this note';
+          newBtn.textContent = '✕';
+          newBtn.onclick = () => removeEntry(id);
+          header.insertBefore(newBtn, numEl.nextSibling);
+        }
+      } else {
+        if (btn) btn.remove();
+      }
+    });
+  }
+
+  function triggerUpload(entryId, slotIdx) {
+    document.getElementById(`fileInput-${entryId}-${slotIdx}`).click();
+  }
+
+  function handleFile(event, entryId, slotIdx) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX = 600;
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > MAX) { h = h * MAX / w; w = MAX; } }
+        else        { if (h > MAX) { w = w * MAX / h; h = MAX; } }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.6);
+        const entry = entries.find(e => e.id === entryId);
+        if (entry) entry.photos[slotIdx] = compressed;
+        renderSlot(entryId, slotIdx, compressed);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
+
+  function renderSlot(entryId, slotIdx, src) {
+    const slot = document.getElementById(`slot-${entryId}-${slotIdx}`);
+    slot.classList.add('has-image');
+    const existing = slot.querySelector('img');
+    if (existing) existing.remove();
+    slot.querySelector('.photo-slot-icon').style.display = 'none';
+    slot.querySelector('.photo-slot-text').style.display = 'none';
+    const img = document.createElement('img');
+    img.src = src;
+    slot.insertBefore(img, slot.firstChild);
+  }
+
+  function removePhoto(event, entryId, slotIdx) {
+    event.stopPropagation();
+    const entry = entries.find(e => e.id === entryId);
+    if (entry) entry.photos[slotIdx] = null;
+    const slot = document.getElementById(`slot-${entryId}-${slotIdx}`);
+    slot.classList.remove('has-image');
+    const img = slot.querySelector('img');
+    if (img) img.remove();
+    slot.querySelector('.photo-slot-icon').style.display = '';
+    slot.querySelector('.photo-slot-text').style.display = '';
+  }
+
+  // Copy code for a specific entry
+  const entryCodes = {};
+  function copyCode(entryId) {
+    const code = entryCodes[entryId] || '';
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.querySelector(`#codePreview-${entryId} .copy-code-btn`);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1800);
+    });
+  }
+
+  function getBaseParams() {
+    const rawdateEl = document.getElementById('rawdate');
+    return {
+      man:         document.getElementById('nameMan').value.trim()       || 'James',
+      woman:       document.getElementById('nameWoman').value.trim()     || 'Sofia',
+      todayDate:   document.getElementById('todayDate').value.trim()     || '',
+      todayTime:   document.getElementById('todayTime').value.trim()     || '',
+      date:        document.getElementById('ceremonyDate').value.trim()  || '',
+      time:        document.getElementById('ceremonyTime').value.trim()  || '',
+      rawdate:     rawdateEl ? rawdateEl.value : '',
+      venue:       document.getElementById('venue').value.trim()         || '',
+      textLocation: document.getElementById('textLocation').value.trim()  || '',
+      msg:         document.getElementById('message').value.trim()       || '',
+      theme:       currentTheme,
+    };
+  }
+
+  // Regular invitation
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    const b = getBaseParams();
+    const params = new URLSearchParams(b);
+    const url = 'invitation.html?' + params.toString();
+    if (isMobile) {
+      window.location.href = url;
+    } else {
+      window.open(url, '_blank', 'noopener');
+    }
+  });
+
+  // Special invitations
+  document.getElementById('generateSpecialBtn').addEventListener('click', () => {
+    // Build array of special note data
+    const allNotes = [];
+    for (const entry of entries) {
+      const msg = (document.getElementById(`specialMsg-${entry.id}`)?.value || '').trim();
+      const photos = entry.photos.filter(p => p !== null);
+      if (!msg && photos.length === 0) continue;
+      const code = generateCode();
+      entryCodes[entry.id] = code;
+      document.getElementById(`codeDisplay-${entry.id}`).textContent = code;
+      document.getElementById(`codePreview-${entry.id}`).classList.add('visible');
+      allNotes.push({ msg, photos, code });
+    }
+
+    if (allNotes.length === 0) {
+      // Flash all special cards
+      document.querySelectorAll('.note-entry').forEach(el => {
+        el.style.borderColor = 'rgba(181,128,138,0.6)';
+        setTimeout(() => el.style.borderColor = '', 600);
+      });
+      return;
+    }
+
+    const b = getBaseParams();
+    const params = new URLSearchParams(b);
+    // Encode all notes as a JSON array
+    params.set('special', btoa(unescape(encodeURIComponent(JSON.stringify(allNotes)))));
+
+    const url = 'invitation.html?' + params.toString();
+    if (isMobile) {
+      window.location.href = url;
+    } else {
+      window.open(url, '_blank', 'noopener');
+    }
+  });
+
+  document.getElementById('addNoteBtn').addEventListener('click', () => {
+    addNoteEntry();
+    updateRemoveBtns();
+  });
+
+  // Enter shortcuts
+  ['nameMan','nameWoman','venue'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('generateBtn').click();
+    });
+  });
+
+  // ── PICKER SYSTEM ────────────────────────────────────────────────
+  (function() {
+    // Backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'picker-backdrop';
+    document.body.appendChild(backdrop);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'picker-panel';
+    document.body.appendChild(panel);
+
+    let activeTrigger = null;
+    let activeFieldId = null;
+    let activeType = null;
+
+    // Calendar state
+    let calYear, calMonth, calSelectedDay = null, calSelectedMonth, calSelectedYear;
+
+    // Time state
+    let drumHour = 11, drumMin = 0, drumAmPm = 'AM';
+
+    // ITEM HEIGHT constant
+    const ITEM_H = 40;
+
+    // ── Close ──
+    function closePicker() {
+      panel.classList.remove('visible');
+      backdrop.classList.remove('visible');
+      if (activeTrigger) activeTrigger.classList.remove('open');
+      activeTrigger = null;
+    }
+    backdrop.addEventListener('click', closePicker);
+
+    // ── Open ──
+    window.openPicker = function(fieldId, type, trigger) {
+      if (activeTrigger === trigger && panel.classList.contains('visible')) {
+        closePicker(); return;
+      }
+      activeTrigger = trigger;
+      activeFieldId = fieldId;
+      activeType = type;
+      trigger.classList.add('open');
+
+      if (type === 'date') buildCalendar();
+      else buildTimePicker();
+
+      backdrop.classList.add('visible');
+      panel.classList.add('visible');
+      positionPanel(trigger);
+    };
+
+    function positionPanel(trigger) {
+      const vw = window.innerWidth;
+      if (vw <= 600) {
+        // Mobile: slide up as a bottom sheet
+        panel.style.position = 'fixed';
+        panel.style.left     = '0';
+        panel.style.right    = '0';
+        panel.style.bottom   = '0';
+        panel.style.top      = 'auto';
+        panel.style.width    = '100%';
+        panel.style.maxWidth = '100%';
+        panel.style.borderRadius = '16px 16px 0 0';
+        panel.style.maxHeight = '82vh';
+        panel.style.overflowY = 'auto';
+        panel.style.paddingBottom = 'max(22px, env(safe-area-inset-bottom))';
+      } else {
+        // Desktop: dropdown below / above trigger
+        panel.style.position = 'fixed';
+        panel.style.bottom = '';
+        panel.style.right  = '';
+        panel.style.width  = '';
+        panel.style.maxWidth = '320px';
+        panel.style.borderRadius = '4px';
+        panel.style.maxHeight = '';
+        panel.style.overflowY = '';
+        panel.style.paddingBottom = '';
+        const rect = trigger.getBoundingClientRect();
+        const pw = panel.offsetWidth || 290;
+        const ph = panel.offsetHeight || 340;
+        const vh = window.innerHeight;
+        let left = rect.left, top = rect.bottom + 6;
+        if (left + pw > vw - 10) left = vw - pw - 10;
+        if (left < 10) left = 10;
+        if (top + ph > vh - 10) top = rect.top - ph - 6;
+        if (top < 10) top = 10;
+        panel.style.left = left + 'px';
+        panel.style.top  = top  + 'px';
+      }
+    }
+
+    // ── CALENDAR ──
+    const MONTHS = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+    const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
+    function buildCalendar() {
+      const now = new Date();
+      if (calYear === undefined) { calYear = now.getFullYear(); calMonth = now.getMonth(); }
+
+      panel.innerHTML = `
+        <div class="cal-header">
+          <button class="cal-nav" id="calPrev">&#8249;</button>
+          <div class="cal-month-label" id="calMonthLabel"></div>
+          <button class="cal-nav" id="calNext">&#8250;</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <button class="picker-confirm" id="calConfirm">✦ Confirm Date</button>
+      `;
+
+      document.getElementById('calPrev').onclick = () => {
+        calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+        renderCalGrid();
+      };
+      document.getElementById('calNext').onclick = () => {
+        calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+        renderCalGrid();
+      };
+      document.getElementById('calConfirm').onclick = confirmDate;
+
+      renderCalGrid();
+    }
+
+    function renderCalGrid() {
+      document.getElementById('calMonthLabel').textContent = MONTHS[calMonth] + ' ' + calYear;
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      DAYS.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-dow'; el.textContent = d; grid.appendChild(el);
+      });
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = new Date();
+
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('button'); el.className = 'cal-day empty'; grid.appendChild(el);
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const el = document.createElement('button');
+        el.className = 'cal-day'; el.textContent = d;
+        const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+        if (isToday) el.classList.add('today');
+        if (calSelectedDay === d && calSelectedMonth === calMonth && calSelectedYear === calYear)
+          el.classList.add('selected');
+        el.onclick = () => {
+          calSelectedDay = d; calSelectedMonth = calMonth; calSelectedYear = calYear;
+          renderCalGrid();
+        };
+        grid.appendChild(el);
+      }
+    }
+
+    function confirmDate() {
+      if (!calSelectedDay) return;
+      const d = new Date(calSelectedYear, calSelectedMonth, calSelectedDay);
+      const formatted = d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+      document.getElementById(activeFieldId).value = formatted;
+      // Also store YYYY-MM-DD rawdate for ceremony date (for countdown)
+      if (activeFieldId === 'ceremonyDate') {
+        const mm = String(calSelectedMonth + 1).padStart(2,'0');
+        const dd = String(calSelectedDay).padStart(2,'0');
+        let rawEl = document.getElementById('rawdate');
+        if (!rawEl) { rawEl = document.createElement('input'); rawEl.type='hidden'; rawEl.id='rawdate'; document.body.appendChild(rawEl); }
+        rawEl.value = calSelectedYear + '-' + mm + '-' + dd;
+      }
+      const valEl = activeTrigger.querySelector('.picker-val');
+      valEl.textContent = formatted; valEl.classList.remove('placeholder');
+      closePicker();
+    }
+
+    // ── DRUM (TIME) ──
+    function buildTimePicker() {
+      // Load existing value
+      const existing = document.getElementById(activeFieldId).value;
+      if (existing) {
+        const m = existing.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (m) {
+          drumHour = parseInt(m[1]);
+          drumMin  = parseInt(m[2]);
+          drumAmPm = m[3].toUpperCase();
+        }
+      }
+
+      const hours   = Array.from({length:12}, (_,i)=> String(i+1).padStart(2,'0'));
+      const minutes = Array.from({length:60}, (_,i)=> String(i).padStart(2,'0'));
+
+      panel.innerHTML = `
+        <div class="time-drum-wrap">
+          <div class="drum-col">
+            <div class="drum-label">Hour</div>
+            <div class="drum" id="drumH"><div class="drum-stripe"></div><div class="drum-list" id="drumHList"></div></div>
+          </div>
+          <div class="drum-sep">:</div>
+          <div class="drum-col">
+            <div class="drum-label">Min</div>
+            <div class="drum" id="drumM"><div class="drum-stripe"></div><div class="drum-list" id="drumMList"></div></div>
+          </div>
+          <div class="ampm-col">
+            <button class="ampm-btn${drumAmPm==='AM'?' active':''}" id="btnAM">AM</button>
+            <button class="ampm-btn${drumAmPm==='PM'?' active':''}" id="btnPM">PM</button>
+          </div>
+        </div>
+        <button class="picker-confirm" id="timeConfirm">✦ Confirm Time</button>
+      `;
+
+      // Populate drums with padding items for wrap feel
+      function fillDrum(listEl, items, selectedVal) {
+        // 2 padding items top & bottom
+        const pad = 2;
+        for (let p=0;p<pad;p++) { const el=document.createElement('div'); el.className='drum-item'; el.textContent=''; listEl.appendChild(el); }
+        items.forEach(v => {
+          const el = document.createElement('div');
+          el.className = 'drum-item'; el.textContent = v;
+          if (v === selectedVal) el.classList.add('selected');
+          listEl.appendChild(el);
+        });
+        for (let p=0;p<pad;p++) { const el=document.createElement('div'); el.className='drum-item'; el.textContent=''; listEl.appendChild(el); }
+      }
+
+      const hStr = String(drumHour).padStart(2,'0');
+      const mStr = String(drumMin).padStart(2,'0');
+      fillDrum(document.getElementById('drumHList'), hours, hStr);
+      fillDrum(document.getElementById('drumMList'), minutes, mStr);
+
+      // Scroll to selected
+      const hIdx = hours.indexOf(hStr);
+      const mIdx = minutes.indexOf(mStr);
+      setDrumPos(document.getElementById('drumHList'), hIdx);
+      setDrumPos(document.getElementById('drumMList'), mIdx);
+
+      // Attach drag/scroll
+      attachDrum(document.getElementById('drumH'), document.getElementById('drumHList'), hours, v => { drumHour = parseInt(v); });
+      attachDrum(document.getElementById('drumM'), document.getElementById('drumMList'), minutes, v => { drumMin = parseInt(v); });
+
+      document.getElementById('btnAM').onclick = () => { drumAmPm='AM'; document.getElementById('btnAM').classList.add('active'); document.getElementById('btnPM').classList.remove('active'); };
+      document.getElementById('btnPM').onclick = () => { drumAmPm='PM'; document.getElementById('btnPM').classList.add('active'); document.getElementById('btnAM').classList.remove('active'); };
+      document.getElementById('timeConfirm').onclick = confirmTime;
+    }
+
+    function setDrumPos(listEl, idx) {
+      const pad = 2;
+      listEl.style.transition = 'none';
+      listEl.style.top = (-( (pad + idx) * ITEM_H - 80) ) + 'px';
+    }
+
+    function attachDrum(drumEl, listEl, items, onSelect) {
+      const pad = 2;
+      let startY = 0, startTop = 0, isDragging = false, velocity = 0, lastY = 0, lastTime = 0;
+      let animFrame = null;
+
+      function getTop() { return parseInt(listEl.style.top) || 0; }
+      function clampedIdx(rawTop) {
+        const idx = Math.round(-(rawTop - 80) / ITEM_H) - pad;
+        return Math.max(0, Math.min(items.length - 1, idx));
+      }
+      function snapTo(idx, animate=true) {
+        const newTop = -((pad + idx) * ITEM_H - 80);
+        listEl.style.transition = animate ? 'top 0.22s cubic-bezier(0.22,1,0.36,1)' : 'none';
+        listEl.style.top = newTop + 'px';
+        // Update selected class
+        listEl.querySelectorAll('.drum-item').forEach((el, i) => {
+          el.classList.toggle('selected', i === pad + idx);
+        });
+        onSelect(items[idx]);
+      }
+
+      function onStart(y) {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        isDragging = true; startY = y; startTop = getTop();
+        velocity = 0; lastY = y; lastTime = Date.now();
+        listEl.style.transition = 'none';
+      }
+      function onMove(y) {
+        if (!isDragging) return;
+        const dy = y - startY;
+        const newTop = startTop + dy;
+        // Bounds with rubber band
+        const minTop = -((pad + items.length - 1) * ITEM_H - 80);
+        const maxTop = -(pad * ITEM_H - 80) + ITEM_H;
+        const clamped = Math.max(minTop - 30, Math.min(maxTop + 30, newTop));
+        listEl.style.top = clamped + 'px';
+        const now = Date.now();
+        velocity = (y - lastY) / (now - lastTime + 1);
+        lastY = y; lastTime = now;
+        // Update highlights live
+        const idx = clampedIdx(clamped);
+        listEl.querySelectorAll('.drum-item').forEach((el, i) => {
+          el.classList.toggle('selected', i === pad + idx);
+        });
+      }
+      function onEnd() {
+        if (!isDragging) return; isDragging = false;
+        // Momentum
+        let top = getTop();
+        const fling = () => {
+          velocity *= 0.88;
+          top += velocity * 16;
+          listEl.style.top = top + 'px';
+          if (Math.abs(velocity) > 0.3) { animFrame = requestAnimationFrame(fling); }
+          else { snapTo(clampedIdx(top)); }
+        };
+        if (Math.abs(velocity) > 0.4) { animFrame = requestAnimationFrame(fling); }
+        else { snapTo(clampedIdx(top)); }
+      }
+
+      // Mouse
+      drumEl.addEventListener('mousedown', e => { e.preventDefault(); onStart(e.clientY); });
+      window.addEventListener('mousemove', e => onMove(e.clientY));
+      window.addEventListener('mouseup', onEnd);
+      // Touch
+      drumEl.addEventListener('touchstart', e => { e.preventDefault(); onStart(e.touches[0].clientY); }, {passive:false});
+      drumEl.addEventListener('touchmove',  e => { e.preventDefault(); onMove(e.touches[0].clientY); }, {passive:false});
+      drumEl.addEventListener('touchend',   onEnd);
+      // Wheel
+      drumEl.addEventListener('wheel', e => {
+        e.preventDefault();
+        const idx = clampedIdx(getTop());
+        const delta = e.deltaY > 0 ? 1 : -1;
+        snapTo(Math.max(0, Math.min(items.length-1, idx + delta)));
+      }, {passive:false});
+    }
+
+    function confirmTime() {
+      const h = String(drumHour).padStart(2,'0');
+      const m = String(drumMin).padStart(2,'0');
+      const val = `${h}:${m} ${drumAmPm}`;
+      document.getElementById(activeFieldId).value = val;
+      const valEl = activeTrigger.querySelector('.picker-val');
+      valEl.textContent = val; valEl.classList.remove('placeholder');
+      closePicker();
+    }
+
+  })();
+  // ── END PICKER SYSTEM ─────────────────────────────────────────────
+
+
+</script>
+</body>
+</html>

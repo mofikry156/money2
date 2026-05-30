@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wedding Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600;700&family=Lato:wght@100;300;400&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent:   #c9a96e; --accent-d: #8a6c3a; --accent-l: #e8d5a3;
+  --accent-xl:#f5edd8; --name-col: #1a1005; --inv-bg:   #f7f0e3;
+  --dark:     #0e0b06; --dark2:    #1a1208; --petal-c:  rgba(201,169,110,0.22);
+}
+[data-theme="rose"]  { --accent:#b5717f; --accent-d:#8a4f5a; --accent-l:#e8c0c8; --accent-xl:#fdf0f2; --name-col:#200810; --inv-bg:#fdf0f2; --petal-c:rgba(181,113,127,0.2); }
+[data-theme="sage"]  { --accent:#5a8058; --accent-d:#3a5a38; --accent-l:#a8c8a5; --accent-xl:#f0f5f0; --name-col:#0a180a; --inv-bg:#f0f5f0; --petal-c:rgba(90,128,88,0.2); }
+[data-theme="navy"]  { --accent:#3a4e9a; --accent-d:#1e2e6a; --accent-l:#8898d8; --accent-xl:#f0f2f8; --name-col:#080e26; --inv-bg:#f0f2f8; --petal-c:rgba(58,78,154,0.2); }
+[data-theme="blush"] { --accent:#a06050; --accent-d:#784038; --accent-l:#e0b8a8; --accent-xl:#fdf2ee; --name-col:#280e08; --inv-bg:#fdf2ee; --petal-c:rgba(160,96,80,0.2); }
+
+html { scroll-behavior: smooth; }
+body { background: var(--dark); color: var(--accent-l); font-family: 'Lato', sans-serif; overflow-x: hidden; cursor: none; }
+
+#cursor      { position:fixed; width:10px; height:10px; background:var(--accent); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:screen; transition:width .15s,height .15s; }
+#cursor-ring { position:fixed; width:38px; height:38px; border:1px solid rgba(201,169,110,0.35); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); }
+
+#starfield { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+.petals { position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+.petal  { position:absolute; border-radius:60% 40% 70% 30% / 50% 60% 40% 50%; background:var(--petal-c); opacity:0; animation:petalDrift linear infinite; }
+@keyframes petalDrift {
+  0%   { opacity:0; transform:translateY(-80px) translateX(0) rotate(0deg) scale(0.4); }
+  8%   { opacity:1; }
+  88%  { opacity:0.5; }
+  100% { opacity:0; transform:translateY(105vh) translateX(var(--drift,60px)) rotate(540deg) scale(1); }
+}
+
+#progress-bar { position:fixed; top:0; left:0; height:2px; width:0%; background:linear-gradient(90deg,var(--accent-d),var(--accent),var(--accent-l)); z-index:1000; box-shadow:0 0 10px var(--accent); transition:width .08s linear; }
+
+.reveal       { opacity:0; transform:translateY(50px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+.reveal-left  { opacity:0; transform:translateX(-65px); transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+.reveal-right { opacity:0; transform:translateX(65px);  transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+.reveal-scale { opacity:0; transform:scale(0.84);       transition:opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1); }
+.reveal.visible,.reveal-left.visible,.reveal-right.visible,.reveal-scale.visible { opacity:1; transform:none; }
+.d1{transition-delay:.1s!important} .d2{transition-delay:.22s!important} .d3{transition-delay:.36s!important}
+.d4{transition-delay:.5s!important} .d5{transition-delay:.64s!important} .d6{transition-delay:.8s!important}
+
+/* ── HERO ── */
+#hero { position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; z-index:10; overflow:hidden; padding:60px 30px; }
+.hero-glow { position:absolute; width:80vw; height:80vw; max-width:700px; max-height:700px; border-radius:50%; background:radial-gradient(circle,rgba(201,169,110,0.13) 0%,transparent 65%); animation:glowPulse 6s ease-in-out infinite alternate; pointer-events:none; }
+@keyframes glowPulse { from{transform:scale(0.88);opacity:.6} to{transform:scale(1.12);opacity:1} }
+
+.hero-eyebrow { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.55em; text-transform:uppercase; color:var(--accent); opacity:0; animation:fadeUp 1s .4s ease forwards; margin-bottom:22px; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:.65;transform:translateY(0)} }
+
+.hero-names { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(3.8rem,13vw,9.5rem); line-height:.9; color:var(--accent-xl); opacity:0; animation:namesReveal 1.4s .75s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes namesReveal { from{opacity:0;transform:scale(.88) translateY(30px)} to{opacity:1;transform:none} }
+.hero-names .amp { display:block; font-style:italic; font-size:.68em; color:var(--accent); line-height:1; animation:ampSpin 1.2s 1.5s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes ampSpin { from{opacity:0;transform:rotate(-14deg) scale(.5)} to{opacity:1;transform:none} }
+
+.hero-rule { width:0; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); margin:28px auto; animation:ruleExpand 1.2s 1.9s ease forwards; }
+@keyframes ruleExpand { to{width:min(300px,60vw)} }
+
+.hero-date-badge { opacity:0; animation:fadeUp 1s 2.3s ease forwards; }
+.hero-date-text  { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1rem,3vw,1.5rem); color:var(--accent-l); letter-spacing:.06em; }
+
+.hero-scroll-hint { position:absolute; bottom:36px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; animation:softFadeIn 1s 3.2s ease forwards; }
+@keyframes softFadeIn { to{opacity:.45} }
+.hero-scroll-hint span { font-size:.54rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent); }
+.scroll-arrow { width:1px; height:42px; background:linear-gradient(to bottom,var(--accent),transparent); animation:arrowBob 1.8s 3.4s ease-in-out infinite; }
+@keyframes arrowBob { 0%,100%{transform:scaleY(1) translateY(0);opacity:.5} 50%{transform:scaleY(1.3) translateY(7px);opacity:1} }
+
+/* ── TOGETHER ── */
+#section-together { position:relative; z-index:10; min-height:80vh; display:flex; align-items:center; justify-content:center; padding:100px 40px; }
+.together-inner { max-width:700px; text-align:center; }
+.together-rule-v { width:1px; height:0; background:linear-gradient(to bottom,transparent,var(--accent),transparent); margin:0 auto 50px; transition:height 1.2s cubic-bezier(.22,1,.36,1); }
+.together-rule-v.visible { height:90px; }
+.together-label { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.45em; text-transform:uppercase; color:var(--accent-l); opacity:.85; margin-bottom:30px; }
+.together-quote { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; font-size:clamp(1.5rem,4.5vw,2.7rem); color:var(--accent-xl); line-height:1.55; letter-spacing:.02em; }
+.word-reveal span { display:inline-block; opacity:0; transform:translateY(22px); transition:opacity .5s,transform .5s cubic-bezier(.22,1,.36,1); }
+.word-reveal.visible span { opacity:1; transform:none; }
+
+/* ── CARD SECTION ── */
+#section-card { position:relative; z-index:10; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:80px 30px; }
+.card-wrap { perspective:1400px; width:100%; max-width:680px; }
+
+.invitation {
+  position:relative; background:var(--inv-bg); padding:80px 64px; text-align:center;
+  box-shadow:0 60px 120px rgba(0,0,0,.8),0 0 0 1px rgba(201,169,110,.2),inset 0 0 100px rgba(201,169,110,.03);
+  transform-style:preserve-3d; transition:transform .15s ease-out;
+}
+.invitation::after { content:''; position:absolute; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E"); pointer-events:none; z-index:1; }
+
+.shine { position:absolute; top:0; left:-100%; width:50%; height:100%; background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%); pointer-events:none; z-index:2; transition:left 1.3s ease; }
+.card-wrap.visible .shine { left:160%; }
+
+.inv-frame       { position:absolute; inset:18px; border:1px solid var(--accent); opacity:0; transition:opacity .8s .6s; pointer-events:none; }
+.inv-frame-inner { position:absolute; inset:26px; border:1px solid var(--accent); opacity:0; transition:opacity .8s .9s; pointer-events:none; }
+.card-wrap.visible .inv-frame       { opacity:.18; }
+.card-wrap.visible .inv-frame-inner { opacity:.08; }
+
+.corner { position:absolute; width:88px; height:88px; color:var(--accent); opacity:0; transition:opacity .6s,transform .6s cubic-bezier(.34,1.56,.64,1); }
+.corner svg { width:100%; height:100%; }
+.corner.tl { top:6px;    left:6px;   transform:scale(.6); }
+.corner.tr { top:6px;    right:6px;  transform:scaleX(-1) scale(.6); }
+.corner.bl { bottom:6px; left:6px;   transform:scaleY(-1) scale(.6); }
+.corner.br { bottom:6px; right:6px;  transform:scale(-.6); }
+.card-wrap.visible .corner        { opacity:.5; }
+.card-wrap.visible .corner.tl     { transform:scale(1);   transition-delay:.5s; }
+.card-wrap.visible .corner.tr     { transform:scaleX(-1); transition-delay:.65s; }
+.card-wrap.visible .corner.bl     { transform:scaleY(-1); transition-delay:.8s; }
+.card-wrap.visible .corner.br     { transform:scale(-1);  transition-delay:.95s; }
+
+.inv-eyebrow   { font-family:'Lato',sans-serif; font-size:.56rem; letter-spacing:.45em; text-transform:uppercase; color:var(--accent-d); opacity:1; margin-bottom:28px; }
+.inv-together  { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1rem; color:var(--accent-d); opacity:1; margin-bottom:20px; letter-spacing:.06em; }
+.inv-names     { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(2.5rem,7vw,3.9rem); color:var(--name-col); line-height:1.05; }
+.inv-amp       { display:block; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(2rem,5.5vw,3.1rem); color:var(--accent); line-height:1; margin:6px 0; }
+.inv-divider   { display:flex; align-items:center; gap:14px; margin:28px auto; max-width:280px; }
+.inv-div-line  { flex:1; height:1px; background:var(--accent); opacity:.45; }
+.inv-div-ctr   { display:flex; gap:5px; align-items:center; }
+.inv-diamond   { width:7px; height:7px; background:var(--accent); transform:rotate(45deg); opacity:.75; }
+.inv-dot       { width:3px; height:3px; background:var(--accent); border-radius:50%; opacity:.5; }
+.inv-message   { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.05rem; color:#3e2f14; line-height:1.9; margin-bottom:32px; }
+.inv-grid      { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin:0 auto 28px; max-width:400px; }
+.inv-cell      { text-align:center; }
+.inv-cell-lbl  { font-family:'Lato',sans-serif; font-size:.5rem; letter-spacing:.38em; text-transform:uppercase; color:var(--accent-d); opacity:.9; margin-bottom:7px; }
+.inv-cell-val  { font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--name-col); line-height:1.5; }
+.inv-footer-t  { font-family:'Lato',sans-serif; font-size:.54rem; letter-spacing:.35em; text-transform:uppercase; color:var(--accent-d); opacity:.7; margin-top:28px; }
+
+/* ── ARABIC SUPPORT ── */
+.arabic {
+  font-family: 'Amiri', serif !important;
+  direction: rtl;
+  letter-spacing: 0 !important; /* Arabic doesn't use letter-spacing */
+  font-style: normal !important;
+}
+.arabic.inv-names  { font-size: clamp(2.2rem, 6.5vw, 3.6rem) !important; font-weight: 700 !important; line-height: 1.3 !important; }
+.arabic.inv-amp    { font-size: clamp(1.8rem, 5vw, 2.8rem) !important; font-style: normal !important; }
+.arabic.inv-message { font-size: 1.15rem !important; line-height: 2.2 !important; font-style: normal !important; }
+.arabic.inv-cell-val { font-size: 1.1rem !important; line-height: 1.8 !important; }
+.arabic.hero-names  { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; line-height: 1.2 !important; }
+.arabic.hero-date-text { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; }
+.arabic.together-quote { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; line-height: 1.9 !important; }
+.arabic.detail-value { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-size: clamp(1.1rem, 3vw, 1.8rem) !important; font-style: normal !important; }
+.arabic.close-big { font-family: 'Amiri', serif !important; letter-spacing: 0 !important; font-style: normal !important; line-height: 1.6 !important; }
+
+/* ── DETAILS ── */
+#section-details { position:relative; z-index:10; padding:100px 40px; max-width:900px; margin:0 auto; }
+.details-heading { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.5em; text-transform:uppercase; color:var(--accent-l); opacity:1; text-align:center; margin-bottom:80px; }
+.detail-item     { display:grid; grid-template-columns:1fr 80px 1fr; align-items:center; margin-bottom:70px; }
+.detail-text     { padding:0 28px; }
+.detail-text.right { text-align:right; }
+.detail-number   { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:4rem; color:var(--accent); opacity:.65; line-height:1; margin-bottom:-10px; }
+.detail-label    { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent-l); opacity:1; margin-bottom:8px; }
+.detail-value    { font-family:'Cormorant Garamond',serif; font-size:clamp(1.2rem,3.5vw,2rem); color:var(--accent-xl); font-weight:300; line-height:1.3; text-shadow: 0 0 30px rgba(201,169,110,0.2); }
+.detail-icon-wrap{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.detail-icon     { width:46px; height:46px; border:1px solid var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--accent-xl); font-size:1.2rem; opacity:1; position:relative; }
+.detail-icon::before { content:''; position:absolute; inset:-5px; border-radius:50%; border:1px solid var(--accent); opacity:.35; }
+.detail-vline    { width:1px; background:linear-gradient(to bottom,var(--accent),transparent); opacity:.4; flex:1; min-height:40px; }
+
+/* ── COUNTDOWN ── */
+#section-countdown { position:relative; z-index:10; padding:100px 30px; text-align:center; min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.countdown-label { font-family:'Cinzel',serif; font-size:.58rem; letter-spacing:.5em; text-transform:uppercase; color:var(--accent-l); opacity:1; margin-bottom:50px; }
+.countdown-grid  { display:flex; gap:clamp(20px,5vw,52px); align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+.countdown-unit  { display:flex; flex-direction:column; align-items:center; gap:10px; position:relative; }
+.countdown-unit::after { content:':'; position:absolute; right:calc(-1*clamp(14px,2.8vw,30px)); top:0; font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,7vw,5rem); color:var(--accent); opacity:.45; line-height:1; }
+.countdown-unit:last-child::after { display:none; }
+.countdown-num   { font-family:'Cormorant Garamond',serif; font-weight:300; font-size:clamp(3rem,9vw,6.5rem); color:var(--accent-xl); line-height:1; min-width:2ch; text-align:center; text-shadow: 0 0 40px rgba(201,169,110,0.3); }
+.countdown-unit-lbl { font-family:'Cinzel',serif; font-size:.48rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent-l); opacity:1; }
+.countdown-past  { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.4rem,4vw,2.2rem); color:var(--accent-l); opacity:.8; }
+
+/* ── CLOSE ── */
+#section-close { position:relative; z-index:10; min-height:80vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 30px; text-align:center; }
+.close-ornament { margin-bottom:40px; opacity:.4; }
+.close-ornament svg { width:60px; height:60px; color:var(--accent); }
+.close-big { font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; font-size:clamp(2rem,6vw,3.8rem); color:var(--accent-xl); line-height:1.3; margin-bottom:28px; max-width:600px; }
+.close-sub  { font-family:'Lato',sans-serif; font-size:.64rem; letter-spacing:.4em; text-transform:uppercase; color:var(--accent-l); opacity:.9; margin-bottom:50px; }
+.action-row { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+.btn { padding:13px 32px; font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.3em; text-transform:uppercase; border-radius:1px; cursor:pointer; border:1px solid var(--accent); transition:all .28s; text-decoration:none; display:inline-block; }
+.btn.primary   { background:var(--accent); color:var(--dark); }
+.btn.secondary { background:transparent; color:var(--accent); }
+.btn:hover { opacity:.8; transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,.4); }
+
+/* ── DIVIDERS ── */
+.sec-div { position:relative; z-index:10; display:flex; align-items:center; gap:20px; max-width:500px; margin:0 auto; padding:0 40px; }
+.sec-div-line { flex:1; height:1px; background:linear-gradient(90deg,transparent,var(--accent),transparent); opacity:.3; }
+.sec-div-icon { color:var(--accent); opacity:.5; font-size:.75rem; letter-spacing:.3em; }
+
+/* ══ SECRET CODE LOCK ══ */
+#secret-hint {
+  position: relative; z-index: 10;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 30px 40px;
+  text-align: center;
+}
+.secret-lock-icon {
+  font-size: 2rem; opacity: 0.55; margin-bottom: 18px;
+  animation: lockFloat 3s ease-in-out infinite;
+}
+@keyframes lockFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+.secret-lock-label {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .45em;
+  text-transform: uppercase;
+  color: #e8c0c8;
+  opacity: 1;
+  margin-bottom: 22px;
+}
+
+.secret-input-row {
+  display: flex; gap: 10px; align-items: center;
+  max-width: 320px; width: 100%;
+}
+.secret-code-input {
+  flex: 1;
+  background: rgba(181,128,138,0.06);
+  border: 1px solid rgba(181,128,138,0.22);
+  border-bottom: 1.5px solid rgba(181,128,138,0.5);
+  border-radius: 2px 2px 0 0;
+  padding: 13px 18px;
+  color: #e8c0c8;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color .3s, background .3s;
+}
+.secret-code-input:focus {
+  border-bottom-color: #d4a0a8;
+  background: rgba(181,128,138,0.10);
+}
+.secret-code-input::placeholder { color: rgba(232,192,200,0.25); font-size: 1rem; letter-spacing: 0.2em; }
+
+.secret-unlock-btn {
+  padding: 13px 22px;
+  background: linear-gradient(135deg, #8a5060, #b5717f);
+  border: none;
+  border-radius: 2px;
+  color: #fff;
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform .22s, box-shadow .22s, opacity .22s;
+  white-space: nowrap;
+}
+.secret-unlock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(181,113,127,0.4); }
+.secret-unlock-btn:active { transform: translateY(0); }
+
+.secret-error {
+  margin-top: 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .95rem;
+  color: #e88a90;
+  opacity: 0;
+  transition: opacity .3s;
+  height: 1.2em;
+}
+.secret-error.show { opacity: .75; }
+
+/* ══ SPECIAL NOTE SECTION ══ */
+#section-special {
+  display: none;
+  position: relative; z-index: 10;
+  padding: 80px 30px;
+  max-width: 800px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
+}
+#section-special.unlocked {
+  display: block;
+}
+#section-special.visible {
+  opacity: 1;
+  transform: none;
+}
+
+.special-section-heading {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.special-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: .55rem;
+  letter-spacing: .5em;
+  text-transform: uppercase;
+  color: #e8c0c8;
+  opacity: 1;
+  margin-bottom: 16px;
+}
+.special-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(2rem,5vw,3.2rem);
+  color: #f0d0d8;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.special-subtitle-line {
+  display: flex; align-items: center; gap: 14px; max-width: 280px; margin: 0 auto;
+}
+.special-sub-line { flex:1; height:1px; background:linear-gradient(to right,transparent,rgba(181,128,138,0.5)); opacity:.6; }
+.special-sub-line.r { background:linear-gradient(to left,transparent,rgba(181,128,138,0.5)); }
+.special-sub-diamond { width:5px; height:5px; background:#d4a0a8; transform:rotate(45deg); opacity:.6; }
+
+/* Special message card */
+.special-msg-card {
+  background: rgba(181,128,138,0.07);
+  border: 1px solid rgba(181,128,138,0.2);
+  border-top: 1px solid rgba(181,128,138,0.38);
+  border-radius: 4px;
+  padding: 40px 44px;
+  text-align: center;
+  margin-bottom: 36px;
+  position: relative;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(181,128,138,0.1);
+}
+.special-msg-card::before {
+  content: '✿';
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: #1a1208;
+  padding: 0 12px;
+  color: #d4a0a8;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+.special-msg-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.25rem, 3.5vw, 2rem);
+  color: #f0d0d8;
+  line-height: 1.8;
+  letter-spacing: .02em;
+}
+
+/* ── PHOTO GALLERY — Editorial Elegance ── */
+.special-photos {
+  margin-top: 48px;
+  position: relative;
+}
+
+/* Gallery heading rule */
+.gallery-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: scaleX(0.5);
+  transition: opacity .9s .3s ease, transform .9s .3s cubic-bezier(.22,1,.36,1);
+}
+.gallery-rule.visible { opacity: 1; transform: scaleX(1); }
+.gallery-rule-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(181,128,138,0.45)); }
+.gallery-rule-line.r { background: linear-gradient(to left, transparent, rgba(181,128,138,0.45)); }
+.gallery-rule-label {
+  font-family: 'Cinzel', serif;
+  font-size: .48rem;
+  letter-spacing: .5em;
+  text-transform: uppercase;
+  color: #d4a0a8;
+  opacity: .85;
+  white-space: nowrap;
+}
+
+/* Layout containers */
+.gallery-single   { display: block; }
+.gallery-duo      { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: end; }
+.gallery-trio     { display: grid; grid-template-columns: 1.45fr 1fr; grid-template-rows: auto auto; gap: 16px; }
+.gallery-trio .photo-frame-wrap:first-child { grid-row: 1 / 3; }
+
+/* Individual frame wrapper */
+.photo-frame-wrap {
+  position: relative;
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 1s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1);
+}
+.photo-frame-wrap.visible { opacity: 1; transform: none; }
+
+/* The actual picture container */
+.photo-mat {
+  position: relative;
+  overflow: hidden;
+  background: #0e0b06;
+  box-shadow:
+    0 4px 6px rgba(0,0,0,.35),
+    0 16px 40px rgba(0,0,0,.55),
+    0 40px 80px rgba(0,0,0,.35),
+    0 0 0 1px rgba(181,128,138,0.12);
+}
+
+/* Aspect ratios per layout */
+.gallery-single .photo-mat  { aspect-ratio: 4/3; max-height: 480px; }
+.gallery-duo    .photo-mat  { aspect-ratio: 3/4; }
+.gallery-trio .photo-frame-wrap:first-child .photo-mat { aspect-ratio: 3/4; height: 100%; }
+.gallery-trio .photo-frame-wrap:not(:first-child) .photo-mat { aspect-ratio: 4/3; }
+
+.photo-mat img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .9s cubic-bezier(.22,1,.36,1);
+  filter: brightness(.96) contrast(1.03) saturate(.97);
+}
+.photo-frame-wrap:hover .photo-mat img { transform: scale(1.055); }
+
+/* Vignette overlay */
+.photo-mat::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,.42) 100%);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity .6s ease;
+}
+.photo-frame-wrap:hover .photo-mat::after { opacity: .6; }
+
+/* Decorative outer mat border */
+.photo-outer-border {
+  position: absolute;
+  inset: -10px;
+  border: 1px solid rgba(181,128,138,0.18);
+  pointer-events: none;
+  z-index: -1;
+  transition: border-color .5s, inset .5s cubic-bezier(.22,1,.36,1);
+}
+.photo-frame-wrap:hover .photo-outer-border {
+  inset: -14px;
+  border-color: rgba(181,128,138,0.35);
+}
+
+/* Inner gold ruling lines */
+.photo-inner-border {
+  position: absolute; inset: 10px;
+  border: 1px solid rgba(181,128,138,0.22);
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity .5s;
+}
+.photo-frame-wrap:hover .photo-inner-border { opacity: .6; }
+
+/* Corner ornaments */
+.photo-corner {
+  position: absolute;
+  width: 18px; height: 18px;
+  z-index: 4;
+  pointer-events: none;
+}
+.photo-corner svg { width: 100%; height: 100%; }
+.photo-corner.tl { top: 5px; left: 5px; }
+.photo-corner.tr { top: 5px; right: 5px; transform: scaleX(-1); }
+.photo-corner.bl { bottom: 5px; left: 5px; transform: scaleY(-1); }
+.photo-corner.br { bottom: 5px; right: 5px; transform: scale(-1); }
+
+/* Caption / index mark */
+.photo-index {
+  position: absolute;
+  bottom: -22px;
+  right: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: .78rem;
+  color: rgba(181,128,138,.5);
+  letter-spacing: .15em;
+  pointer-events: none;
+  transition: opacity .4s;
+}
+.photo-frame-wrap:hover .photo-index { opacity: 0; }
+
+/* Duo: offset second photo slightly */
+.gallery-duo .photo-frame-wrap:last-child { margin-top: 28px; }
+
+/* Unlock success badge */
+.unlock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(181,128,138,0.1);
+  border: 1px solid rgba(181,128,138,0.25);
+  border-radius: 30px;
+  padding: 6px 16px;
+  margin-bottom: 36px;
+  font-family: 'Cinzel', serif;
+  font-size: .52rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #d4a0a8;
+  opacity: .8;
+}
+.unlock-badge-dot {
+  width: 6px; height: 6px;
+  background: #d4a0a8;
+  border-radius: 50%;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100%{opacity:.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.3)} }
+
+@media (max-width:600px) {
+  /* Hero */
+  #hero { padding: 50px 20px 70px; }
+  .hero-scroll-hint { bottom: 22px; }
+
+  /* Card */
+  #section-card { padding: 50px 16px; }
+  .invitation { padding: 44px 20px 50px; }
+  .inv-grid   { grid-template-columns:1fr; gap:18px; }
+  .corner     { width:52px; height:52px; }
+
+  /* Details section */
+  #section-details { padding: 60px 20px; }
+  .detail-item { grid-template-columns:1fr; text-align:center!important; gap:10px; }
+  .detail-text,.detail-text.right { text-align:center!important; padding:0; }
+  .detail-icon-wrap { flex-direction:row; justify-content:center; }
+  .detail-vline { display:none; }
+
+  /* Countdown */
+  #section-countdown { padding: 60px 20px; }
+
+  /* Together */
+  #section-together { padding: 60px 20px; }
+
+  /* Special section */
+  #section-special { padding: 50px 16px; }
+  .special-msg-card { padding:28px 18px; }
+
+  /* Secret code */
+  #secret-hint { padding: 40px 20px 30px; }
+  .secret-input-row { flex-direction: column; }
+  .secret-unlock-btn { width: 100%; padding: 16px; }
+  .secret-code-input { padding: 15px 18px; font-size: 1.2rem; }
+
+  /* Buttons */
+  .btn { padding: 14px 24px; }
+  .action-row { flex-direction: column; align-items: stretch; }
+  .action-row .btn { text-align: center; }
+
+  /* Gallery: stack duo layout on mobile */
+  .gallery-duo { grid-template-columns: 1fr; }
+  .gallery-duo .photo-frame-wrap:last-child { margin-top: 24px; }
+  .gallery-trio { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .gallery-trio .photo-frame-wrap:first-child { grid-row: auto; }
+
+  /* Close section */
+  #section-close { padding: 50px 20px; }
+}
+
+/* Disable custom cursor and mouse-only effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: auto; }
+  #cursor, #cursor-ring { display: none; }
+
+  /* Disable 3D tilt — it doesn't apply on touch */
+  .invitation { transform: none !important; }
+
+  /* Reveal hover-dependent photo remove buttons always */
+  .photo-slot.has-image .remove-btn { opacity: 1; }
+
+  /* Disable hover scale on theme-like elements */
+  .photo-frame-wrap:hover .photo-mat img { transform: none; }
+  .photo-frame-wrap:hover .photo-outer-border { inset: -10px; border-color: rgba(181,128,138,0.18); }
+  .photo-frame-wrap:hover .photo-inner-border { opacity: 1; }
+  .photo-frame-wrap:hover .photo-mat::after { opacity: 1; }
+  .photo-frame-wrap:hover .photo-index { opacity: 1; }
+  .btn:hover { transform: none; box-shadow: none; }
+}
+
+@media print {
+  /* ── Page setup ──
+     Note: @page size is ignored by most mobile browsers (iOS Safari, Chrome Android).
+     We use block-flow layout instead of position:fixed so mobile print engines
+     render the full card correctly at whatever page size the device uses. */
+  @page { margin: 8mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Hide everything except the card */
+  html, body { margin: 0 !important; padding: 0 !important; }
+  body { background: #fdf8f0 !important; cursor: auto; }
+
+  #starfield, .petals, #cursor, #cursor-ring, #progress-bar,
+  #hero, #section-together, #section-details, #section-countdown,
+  #section-close, .sec-div, .hero-scroll-hint, #secret-hint,
+  #section-special, .shine, .action-row { display: none !important; }
+
+  /* Card section: normal block flow — works on all print engines including mobile */
+  #section-card {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fdf8f0 !important;
+  }
+
+  .card-wrap {
+    perspective: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+
+  /* The invitation card — full width, auto height, centered content */
+  .invitation {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 0 !important;
+    padding: 10mm 12mm !important;
+    background: #fdf8f0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transform-style: flat !important;
+    border: 1px solid rgba(138,108,58,0.4) !important;
+    page-break-inside: avoid;
+  }
+
+  /* Inner double-border frame */
+  .invitation::before {
+    content: '';
+    position: absolute;
+    top: 14px; right: 14px; bottom: 14px; left: 14px;
+    border: 1px solid rgba(138,108,58,0.2);
+    pointer-events: none;
+  }
+
+  /* Remove noise texture */
+  .invitation::after { display: none !important; }
+
+  /* Hide directions/map links — not useful on paper */
+  .inv-cell-val a, .detail-value a { display: none !important; }
+
+  /* Force all animated elements visible */
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Corner ornaments */
+  .corner { opacity: 0.4 !important; transform: none !important; }
+  .corner.tr { transform: scaleX(-1) !important; }
+  .corner.bl { transform: scaleY(-1) !important; }
+  .corner.br { transform: scale(-1) !important; }
+
+  /* Frames */
+  .inv-frame       { opacity: 0.18 !important; }
+  .inv-frame-inner { opacity: 0.08 !important; }
+
+  /* Typography — print-safe dark colors */
+  .inv-eyebrow  { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 14px !important; }
+  .inv-names    { color: #1a1005 !important; font-size: clamp(2rem, 8vw, 3.2rem) !important; }
+  .inv-amp      { color: #c9a96e !important; font-size: clamp(1.6rem, 6vw, 2.6rem) !important; }
+  .inv-divider  { margin: 18px auto !important; }
+  .inv-message  { color: #4a3820 !important; opacity: 1 !important; font-size: 1rem !important; line-height: 1.8 !important; margin-bottom: 0 !important; }
+  .inv-grid     { margin: 0 auto !important; gap: 20px !important; }
+  .inv-cell-lbl { color: #8a6c3a !important; opacity: 1 !important; margin-bottom: 6px !important; }
+  .inv-cell-val { color: #1a1005 !important; font-size: 1rem !important; }
+
+  /* Divider lines */
+  .inv-div-line { background: #c9a96e !important; opacity: 0.5 !important; }
+  .inv-diamond  { background: #c9a96e !important; }
+  .inv-dot      { background: #c9a96e !important; }
+
+  /* Force gold theme for print regardless of chosen theme */
+  .invitation {
+    --accent: #c9a96e; --accent-d: #8a6c3a; --accent-l: #e8d5a3;
+    --name-col: #1a1005; --inv-bg: #fdf8f0;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<canvas id="starfield"></canvas>
+<div class="petals" id="petals"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-eyebrow">&#8212; A Wedding Invitation &#8212;</div>
+  <div class="hero-names">
+    <span id="hero-man">James</span>
+    <span class="amp">&amp;</span>
+    <span id="hero-woman">Sofia</span>
+  </div>
+  <div class="hero-rule"></div>
+  <div class="hero-date-badge"><div class="hero-date-text" id="hero-date-display">Together, Forever</div></div>
+  <div class="hero-scroll-hint">
+    <span>Scroll to discover</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- TOGETHER -->
+<section id="section-together">
+  <div class="together-inner">
+    <div class="together-rule-v reveal"></div>
+    <div class="together-label reveal d2">The Story Begins</div>
+    <div class="together-quote word-reveal reveal d3" id="together-quote"></div>
+  </div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- CARD -->
+<section id="section-card">
+  <div class="card-wrap" id="cardWrap">
+    <div class="invitation" id="invitation">
+      <div class="shine"></div>
+      <div class="inv-frame"></div>
+      <div class="inv-frame-inner"></div>
+
+      <div class="corner tl"><svg viewBox="0 0 90 90" fill="none"><path d="M8 8L8 82" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 8L82 8" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 38Q38 8 38 8" stroke="currentColor" stroke-width=".8" fill="none" opacity=".4"/><path d="M8 60Q60 8 60 8" stroke="currentColor" stroke-width=".5" fill="none" opacity=".2"/><circle cx="8" cy="8" r="3.5" fill="currentColor" opacity=".7"/><circle cx="24" cy="24" r="2" fill="currentColor" opacity=".28"/><circle cx="8" cy="55" r="1.2" fill="currentColor" opacity=".18"/><circle cx="55" cy="8" r="1.2" fill="currentColor" opacity=".18"/></svg></div>
+      <div class="corner tr"><svg viewBox="0 0 90 90" fill="none"><path d="M8 8L8 82" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 8L82 8" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 38Q38 8 38 8" stroke="currentColor" stroke-width=".8" fill="none" opacity=".4"/><circle cx="8" cy="8" r="3.5" fill="currentColor" opacity=".7"/><circle cx="24" cy="24" r="2" fill="currentColor" opacity=".28"/></svg></div>
+      <div class="corner bl"><svg viewBox="0 0 90 90" fill="none"><path d="M8 8L8 82" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 8L82 8" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 38Q38 8 38 8" stroke="currentColor" stroke-width=".8" fill="none" opacity=".4"/><circle cx="8" cy="8" r="3.5" fill="currentColor" opacity=".7"/></svg></div>
+      <div class="corner br"><svg viewBox="0 0 90 90" fill="none"><path d="M8 8L8 82" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 8L82 8" stroke="currentColor" stroke-width=".9" opacity=".6"/><path d="M8 38Q38 8 38 8" stroke="currentColor" stroke-width=".8" fill="none" opacity=".4"/><circle cx="8" cy="8" r="3.5" fill="currentColor" opacity=".7"/></svg></div>
+
+      <div class="inv-eyebrow reveal d1">&#8212; Wedding Invitation &#8212;</div>
+      <div class="inv-names reveal d3">
+        <span id="card-man">James</span>
+        <span class="inv-amp">&amp;</span>
+        <span id="card-woman">Sofia</span>
+      </div>
+
+      <div class="inv-divider reveal d4">
+        <div class="inv-div-line"></div>
+        <div class="inv-div-ctr"><div class="inv-dot"></div><div class="inv-diamond"></div><div class="inv-dot"></div></div>
+        <div class="inv-div-line"></div>
+      </div>
+
+      <div class="inv-message reveal d4" id="card-message">joyfully invite you to celebrate the beginning of their forever</div>
+
+      <div class="inv-grid reveal d5">
+        <div class="inv-cell">
+          <div class="inv-cell-lbl">Date</div>
+          <div class="inv-cell-val" id="card-date">&#8212;</div>
+        </div>
+        <div class="inv-cell">
+          <div class="inv-cell-lbl">Time</div>
+          <div class="inv-cell-val" id="card-time">&#8212;</div>
+        </div>
+        <div class="inv-cell" style="grid-column:1/-1">
+          <div class="inv-cell-lbl">Venue</div>
+          <div class="inv-cell-val" id="card-venue">&#8212;</div>
+        </div>
+      </div>
+
+      <div id="card-today-row" style="display:none; margin-top:20px;">
+        <div class="inv-footer-t" id="card-today-display"></div>
+      </div>
+  </div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- DETAILS -->
+<section id="section-details">
+  <div class="details-heading reveal">Event Details</div>
+
+  <div class="detail-item">
+    <div class="detail-text right reveal-left">
+      <div class="detail-number">01</div>
+      <div class="detail-label">Date</div>
+      <div class="detail-value" id="detail-date">&#8212;</div>
+    </div>
+    <div class="detail-icon-wrap reveal d2">
+      <div class="detail-vline"></div>
+      <div class="detail-icon">&#128197;</div>
+      <div class="detail-vline"></div>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="detail-item">
+    <div></div>
+    <div class="detail-icon-wrap reveal d2">
+      <div class="detail-vline"></div>
+      <div class="detail-icon">&#128336;</div>
+      <div class="detail-vline"></div>
+    </div>
+    <div class="detail-text reveal-right">
+      <div class="detail-number">02</div>
+      <div class="detail-label">Time</div>
+      <div class="detail-value" id="detail-time">&#8212;</div>
+    </div>
+  </div>
+
+  <div class="detail-item">
+    <div class="detail-text right reveal-left">
+      <div class="detail-number">03</div>
+      <div class="detail-label">Venue</div>
+      <div class="detail-value" id="detail-venue">&#8212;</div>
+    </div>
+    <div class="detail-icon-wrap reveal d2">
+      <div class="detail-vline"></div>
+      <div class="detail-icon">&#10022;</div>
+      <div class="detail-vline"></div>
+    </div>
+    <div></div>
+  </div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- COUNTDOWN -->
+<section id="section-countdown">
+  <div class="countdown-label reveal">Counting Down to the Big Day</div>
+  <div class="countdown-grid reveal d2" id="countdown-grid">
+    <div class="countdown-unit"><div class="countdown-num" id="cd-days">&#8212;</div><div class="countdown-unit-lbl">Days</div></div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-hrs">&#8212;</div><div class="countdown-unit-lbl">Hours</div></div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-min">&#8212;</div><div class="countdown-unit-lbl">Minutes</div></div>
+    <div class="countdown-unit"><div class="countdown-num" id="cd-sec">&#8212;</div><div class="countdown-unit-lbl">Seconds</div></div>
+  </div>
+  <div class="countdown-past" id="countdown-past" style="display:none"></div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- SECRET CODE LOCK (only shown when special data exists) -->
+<div id="secret-hint" style="display:none;">
+  <div class="secret-lock-icon">🔐</div>
+  <div class="secret-lock-label">A special message awaits · Enter your code to unlock</div>
+  <div class="secret-input-row">
+    <input class="secret-code-input" id="codeInput" type="text" placeholder="XXX-XXX" maxlength="7" spellcheck="false" autocomplete="off" />
+    <button class="secret-unlock-btn" id="unlockBtn">Unlock ✿</button>
+  </div>
+  <div class="secret-error" id="codeError">That code doesn't seem right — try again</div>
+</div>
+
+<!-- SPECIAL SECTION (hidden until unlocked) -->
+<section id="section-special">
+  <div class="special-section-heading">
+    <div class="unlock-badge"><div class="unlock-badge-dot"></div>Special Message Unlocked</div>
+    <div class="special-eyebrow">A note just for you</div>
+    <div class="special-title">With Love &amp; Joy</div>
+    <div class="special-subtitle-line">
+      <div class="special-sub-line"></div>
+      <div class="special-sub-diamond"></div>
+      <div class="special-sub-line r"></div>
+    </div>
+  </div>
+
+  <div class="special-msg-card" id="specialMsgCard" style="display:none">
+    <div class="special-msg-text" id="specialMsgText"></div>
+  </div>
+
+  <div class="special-photos" id="specialPhotos"></div>
+</section>
+
+<div class="sec-div reveal"><div class="sec-div-line"></div><div class="sec-div-icon">&#10022;</div><div class="sec-div-line"></div></div>
+
+<!-- CLOSE -->
+<section id="section-close">
+  <div class="close-ornament reveal">
+    <svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="30" r="28" stroke="currentColor" stroke-width=".7" opacity=".5"/><circle cx="30" cy="30" r="20" stroke="currentColor" stroke-width=".4" opacity=".3"/><path d="M30 8L30 52M8 30L52 30" stroke="currentColor" stroke-width=".5" opacity=".22"/><circle cx="30" cy="30" r="3" fill="currentColor" opacity=".6"/><circle cx="30" cy="8" r="2" fill="currentColor" opacity=".4"/><circle cx="30" cy="52" r="2" fill="currentColor" opacity=".4"/><circle cx="8" cy="30" r="2" fill="currentColor" opacity=".4"/><circle cx="52" cy="30" r="2" fill="currentColor" opacity=".4"/></svg>
+  </div>
+  <div class="close-big reveal d1" id="close-names-big">James &amp; Sofia</div>
+  <div class="close-sub reveal d2">We cannot wait to celebrate with you</div>
+  <div class="action-row reveal d3">
+    <button class="btn primary" id="printBtn">&#128424; &nbsp;Print Invitation</button>
+  </div>
+</section>
+
+<script>
+const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+const p     = new URLSearchParams(location.search);
+const man   = p.get('man')   || 'James';
+const woman = p.get('woman') || 'Sofia';
+const dateS = p.get('date')  || '';
+const timeS = p.get('time')  || '';
+const venue = p.get('venue') || '';
+const msg   = p.get('msg')   || '';
+const theme = p.get('theme') || 'gold';
+const specialEncoded = p.get('special') || '';
+const todayDateS = p.get('todayDate') || '';
+const todayTimeS = p.get('todayTime') || '';
+const textLocation = p.get('textLocation') || '';
+
+// Parse a human-formatted date string (e.g. "Saturday, June 14 2025") → Date object
+// Also handles legacy YYYY-MM-DD. Returns null if unparseable.
+function parseFormattedDate(s) {
+  if (!s) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s.trim())) {
+    const parts = s.trim().split('-');
+    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+  }
+  const d = new Date(s);
+  if (!isNaN(d)) return d;
+  const stripped = s.replace(/^[A-Za-z]+,\s*/, '');
+  const d2 = new Date(stripped);
+  return isNaN(d2) ? null : d2;
+}
+
+document.body.setAttribute('data-theme', theme);
+document.title = man + ' & ' + woman + ' \u2014 Wedding Invitation';
+
+// ── ARABIC DETECTION & FONT HELPER ──
+// Detects if a string contains Arabic characters and applies Amiri font + RTL
+function hasArabic(str) {
+  return /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(str);
+}
+function applyArabic(el, text) {
+  if (!el) return;
+  if (hasArabic(text)) {
+    el.classList.add('arabic');
+    el.setAttribute('dir', 'rtl');
+    el.setAttribute('lang', 'ar');
+  } else {
+    el.classList.remove('arabic');
+    el.removeAttribute('dir');
+    el.removeAttribute('lang');
+  }
+}
+
+['hero-man','hero-woman','card-man','card-woman'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = id.endsWith('-man') ? man : woman;
+    applyArabic(el, id.endsWith('-man') ? man : woman);
+  }
+});
+
+// Names wrapper elements also need RTL when Arabic
+const heroNamesEl = document.querySelector('.hero-names');
+if (heroNamesEl && (hasArabic(man) || hasArabic(woman))) {
+  heroNamesEl.classList.add('arabic');
+  heroNamesEl.setAttribute('dir', 'rtl');
+}
+const cardNamesEl = document.querySelector('.inv-names');
+if (cardNamesEl && (hasArabic(man) || hasArabic(woman))) {
+  cardNamesEl.classList.add('arabic');
+  cardNamesEl.setAttribute('dir', 'rtl');
+}
+
+const closeNamesEl = document.getElementById('close-names-big');
+if (closeNamesEl) {
+  closeNamesEl.innerHTML = man + ' &amp; ' + woman;
+  if (hasArabic(man) || hasArabic(woman)) {
+    closeNamesEl.classList.add('arabic');
+    closeNamesEl.setAttribute('dir', 'rtl');
+  }
+}
+
+if (dateS) {
+  const heroDateEl = document.getElementById('hero-date-display');
+  heroDateEl.textContent = dateS;
+  applyArabic(heroDateEl, dateS);
+  ['card-date','detail-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = dateS; applyArabic(el, dateS); }
+  });
+}
+if (timeS) ['card-time','detail-time'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = timeS; applyArabic(el, timeS); }
+});
+
+// Show today's date/time as a subtle footer line on the invitation card
+if (todayDateS || todayTimeS) {
+  const parts = [];
+  if (todayDateS) parts.push(todayDateS);
+  if (todayTimeS) parts.push(todayTimeS);
+  const todayRow = document.getElementById('card-today-row');
+  const todayDisplay = document.getElementById('card-today-display');
+  todayDisplay.textContent = parts.join(' · ');
+  todayRow.style.display = 'block';
+}
+if (venue || textLocation) {
+  function isUrl(s) { return /^https?:\/\//i.test(s) || /^(www\.)/i.test(s); }
+  function venueLink(href, label) {
+    return '<a href="' + href + '" target="_blank" rel="noopener" style="color:var(--accent-l);text-decoration:none;border-bottom:1px solid var(--accent);opacity:0.9;transition:opacity .2s;padding-bottom:1px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.9">' + label + ' <span style="font-size:.65em;opacity:.6">↗</span></a>';
+  }
+
+  let cardVenueHTML = '';
+  let detailVenueHTML = '';
+
+  if (venue) {
+    if (isUrl(venue)) {
+      const fullHref = /^https?:\/\//i.test(venue) ? venue : 'https://' + venue;
+      const dirLink = venueLink(fullHref, '📍 View Location');
+      const detailDirLink = venueLink(fullHref, '📍 View on Maps');
+      if (textLocation) {
+        cardVenueHTML = textLocation + ' &nbsp;·&nbsp; ' + dirLink;
+        detailVenueHTML = textLocation + '<br>' + detailDirLink;
+      } else {
+        cardVenueHTML = dirLink;
+        detailVenueHTML = detailDirLink;
+      }
+    } else {
+      const mapsHref = 'https://www.google.com/maps/search/' + encodeURIComponent(venue);
+      const dirLink = venueLink(mapsHref, '📍 Get Directions');
+      if (textLocation) {
+        cardVenueHTML = textLocation + ' &nbsp;·&nbsp; ' + dirLink;
+        detailVenueHTML = textLocation + '<br>' + dirLink;
+      } else {
+        cardVenueHTML = venue + '<br>' + dirLink;
+        detailVenueHTML = venue + '<br>' + dirLink;
+      }
+    }
+  } else if (textLocation) {
+    cardVenueHTML = textLocation;
+    detailVenueHTML = textLocation;
+  }
+
+  document.getElementById('card-venue').innerHTML = cardVenueHTML;
+  document.getElementById('detail-venue').innerHTML = detailVenueHTML;
+  // Apply Arabic if venue text is Arabic
+  const venueText = textLocation || venue;
+  if (hasArabic(venueText)) {
+    ['card-venue','detail-venue'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('arabic'); el.setAttribute('dir','rtl'); el.setAttribute('lang','ar'); }
+    });
+  }
+if (msg) {
+  const msgEl = document.getElementById('card-message');
+  msgEl.textContent = msg;
+  applyArabic(msgEl, msg);
+}
+
+// Together quote
+const quoteText = (msg || 'joyfully invite you to celebrate the beginning of their forever');
+const qEl = document.getElementById('together-quote');
+if (hasArabic(quoteText)) {
+  // Arabic: don't split into per-word spans (breaks RTL joining), animate whole block
+  qEl.textContent = quoteText;
+  qEl.classList.add('arabic');
+  qEl.setAttribute('dir', 'rtl');
+  qEl.setAttribute('lang', 'ar');
+} else {
+  qEl.innerHTML = quoteText.split(' ').map((w,i) =>
+    '<span style="transition-delay:' + (i * 0.065) + 's">' + w + '</span>'
+  ).join(' ');
+}
+
+// ── SPECIAL DATA ──
+// specialData is now an array: [{msg, photos, code}, ...]
+// or a single object (legacy) — normalize to array
+let specialNotes = null;
+if (specialEncoded) {
+  try {
+    const raw = JSON.parse(decodeURIComponent(escape(atob(specialEncoded))));
+    specialNotes = Array.isArray(raw) ? raw : [raw];
+  } catch(e) { specialNotes = null; }
+}
+
+if (specialNotes && specialNotes.length > 0) {
+  document.getElementById('secret-hint').style.display = 'flex';
+
+  // Format code input automatically
+  const codeInput = document.getElementById('codeInput');
+  codeInput.addEventListener('input', function() {
+    let val = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if (val.length > 3) val = val.slice(0,3) + '-' + val.slice(3,6);
+    this.value = val;
+  });
+  codeInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tryUnlock();
+  });
+  document.getElementById('unlockBtn').addEventListener('click', tryUnlock);
+
+  function tryUnlock() {
+    const entered = codeInput.value.trim().toUpperCase();
+    const errEl   = document.getElementById('codeError');
+
+    // Find matching note
+    const matched = specialNotes.find(n => n.code && n.code.toUpperCase() === entered);
+
+    if (matched) {
+      // Hide lock section
+      document.getElementById('secret-hint').style.opacity = '0';
+      document.getElementById('secret-hint').style.transform = 'translateY(-16px)';
+      document.getElementById('secret-hint').style.transition = 'opacity .5s, transform .5s';
+      setTimeout(() => { document.getElementById('secret-hint').style.display = 'none'; }, 500);
+
+      // Show special section
+      const specialSec = document.getElementById('section-special');
+      specialSec.classList.add('unlocked');
+
+      // Populate content
+      if (matched.msg) {
+        const specialMsgEl = document.getElementById('specialMsgText');
+        specialMsgEl.textContent = matched.msg;
+        applyArabic(specialMsgEl, matched.msg);
+        document.getElementById('specialMsgCard').style.display = 'block';
+      }
+
+      if (matched.photos && matched.photos.length > 0) {
+        const gallery = document.getElementById('specialPhotos');
+        const photos = matched.photos;
+        const count = photos.length;
+
+        // Corner SVG
+        const cornerSVG = `<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M1 1L1 14" stroke="rgba(181,128,138,0.55)" stroke-width=".8"/>
+          <path d="M1 1L14 1" stroke="rgba(181,128,138,0.55)" stroke-width=".8"/>
+          <circle cx="1" cy="1" r="1.5" fill="rgba(181,128,138,0.5)"/>
+          <circle cx="8" cy="8" r=".8" fill="rgba(181,128,138,0.2)"/>
+        </svg>`;
+
+        // Gallery rule
+        const ruleEl = document.createElement('div');
+        ruleEl.className = 'gallery-rule';
+        ruleEl.innerHTML = `<div class="gallery-rule-line"></div><div class="gallery-rule-label">✦ &thinsp; Memories &thinsp; ✦</div><div class="gallery-rule-line r"></div>`;
+        gallery.appendChild(ruleEl);
+        setTimeout(() => ruleEl.classList.add('visible'), 200);
+
+        // Choose layout class
+        const layoutClass = count === 1 ? 'gallery-single' : count === 2 ? 'gallery-duo' : 'gallery-trio';
+        const layoutEl = document.createElement('div');
+        layoutEl.className = layoutClass;
+        gallery.appendChild(layoutEl);
+
+        const romanNumerals = ['i', 'ii', 'iii'];
+
+        photos.forEach((src, i) => {
+          const wrap = document.createElement('div');
+          wrap.className = 'photo-frame-wrap';
+
+          wrap.innerHTML = `
+            <div class="photo-outer-border"></div>
+            <div class="photo-mat">
+              <img src="${src}" alt="A cherished memory">
+              <div class="photo-inner-border"></div>
+              <div class="photo-corner tl">${cornerSVG}</div>
+              <div class="photo-corner tr">${cornerSVG}</div>
+              <div class="photo-corner bl">${cornerSVG}</div>
+              <div class="photo-corner br">${cornerSVG}</div>
+            </div>
+            <div class="photo-index">${romanNumerals[i]}</div>
+          `;
+
+          layoutEl.appendChild(wrap);
+          setTimeout(() => wrap.classList.add('visible'), 400 + i * 260);
+        });
+      }
+
+      // Animate in
+      setTimeout(() => {
+        specialSec.classList.add('visible');
+        specialSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+
+    } else {
+      errEl.classList.add('show');
+      codeInput.style.borderBottomColor = '#e88a90';
+      codeInput.style.animation = 'none';
+      codeInput.style.transform = 'translateX(-6px)';
+      setTimeout(() => codeInput.style.transform = 'translateX(6px)', 80);
+      setTimeout(() => codeInput.style.transform = 'translateX(-4px)', 160);
+      setTimeout(() => codeInput.style.transform = 'translateX(4px)', 240);
+      setTimeout(() => { codeInput.style.transform = ''; codeInput.style.borderBottomColor = ''; }, 320);
+      setTimeout(() => errEl.classList.remove('show'), 2800);
+    }
+  }
+}
+
+// Countdown
+function startCountdown() {
+  // Support both legacy rawdate (YYYY-MM-DD) and new formatted date string
+  const rawdate = p.get('rawdate') || '';
+  const target = rawdate
+    ? (() => { const parts = rawdate.split('-'); return new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])); })()
+    : parseFormattedDate(dateS);
+  if (!target || isNaN(target)) return;
+
+  // Apply ceremony time (timeS) so countdown ends at the actual ceremony hour, not midnight
+  if (timeS) {
+    const timeParts = timeS.match(/(\d+):(\d+)\s*(am|pm)?/i);
+    if (timeParts) {
+      let hours = parseInt(timeParts[1]);
+      const minutes = parseInt(timeParts[2]);
+      const meridiem = timeParts[3] ? timeParts[3].toLowerCase() : null;
+      if (meridiem === 'pm' && hours !== 12) hours += 12;
+      if (meridiem === 'am' && hours === 12) hours = 0;
+      target.setHours(hours, minutes, 0, 0);
+    }
+  }
+  function tick() {
+    const diff = target - new Date();
+    const grid = document.getElementById('countdown-grid');
+    const past = document.getElementById('countdown-past');
+    if (diff <= 0) {
+      grid.style.display = 'none'; past.style.display = 'block';
+      past.textContent = man + ' & ' + woman + ' are married! \uD83C\uDF89';
+      return;
+    }
+    const d = Math.floor(diff/86400000);
+    const h = Math.floor((diff%86400000)/3600000);
+    const mn= Math.floor((diff%3600000)/60000);
+    const s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hrs').textContent  = String(h).padStart(2,'0');
+    document.getElementById('cd-min').textContent  = String(mn).padStart(2,'0');
+    document.getElementById('cd-sec').textContent  = String(s).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+}
+startCountdown();
+
+// Starfield
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+const starCount = isTouchDevice ? 80 : 200;
+let stars = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+function initStars() {
+  stars = [];
+  for (let i = 0; i < starCount; i++) {
+    stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height,
+      r:Math.random()*1.5, a:Math.random(), spd:0.003+Math.random()*0.006, ph:Math.random()*Math.PI*2 });
+  }
+}
+function drawStars() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const t = performance.now()/1000;
+  stars.forEach(s => {
+    const al = s.a*(0.35+0.65*Math.sin(t*s.spd*6+s.ph));
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle = 'rgba(232,213,163,'+al+')'; ctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+resizeCanvas(); initStars(); drawStars();
+window.addEventListener('resize', ()=>{ resizeCanvas(); initStars(); });
+
+// Petals
+const petalsEl = document.getElementById('petals');
+const petalCount = isTouchDevice ? 12 : 30;
+for (let i = 0; i < petalCount; i++) {
+  const el = document.createElement('div');
+  el.className = 'petal';
+  const w = 12 + Math.random()*26;
+  const drift = (Math.random()-.5)*200;
+  el.style.cssText = 'left:'+(Math.random()*110-5)+'vw;top:-60px;width:'+w+'px;height:'+(w*(.55+Math.random()*.3))+'px;--drift:'+drift+'px;animation-duration:'+(16+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s;filter:blur('+(Math.random()>.6?1:0)+'px)';
+  petalsEl.appendChild(el);
+}
+
+// Custom cursor (desktop only)
+const cur = document.getElementById('cursor'), ring = document.getElementById('cursor-ring');
+if (!isTouchDevice) {
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cur.style.left=mx+'px'; cur.style.top=my+'px';
+  });
+  (function animRing() {
+    rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
+    ring.style.left=rx+'px'; ring.style.top=ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+}
+
+// Progress bar
+const bar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  bar.style.width = (window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+
+// Card 3D tilt (desktop only)
+if (!isTouchDevice) {
+  const inv = document.getElementById('invitation');
+  document.addEventListener('mousemove', e => {
+    const r = inv.getBoundingClientRect();
+    const dx = (e.clientX-(r.left+r.width/2))/(r.width/2);
+    const dy = (e.clientY-(r.top+r.height/2))/(r.height/2);
+    if (dx*dx+dy*dy < 4) {
+      inv.style.transform = 'rotateY('+dx*5+'deg) rotateX('+(-dy*3.5)+'deg) scale(1.012)';
+    } else { inv.style.transform = ''; }
+  });
+}
+
+// Intersection observer
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el => io.observe(el));
+
+const cardIo = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.18 });
+cardIo.observe(document.getElementById('cardWrap'));
+
+// ── PRINT BUTTON ──
+// On desktop: window.print() works fine.
+// On mobile: browsers block window.print() from button clicks reliably,
+// so we show a friendly instruction sheet instead.
+(function() {
+  const btn = document.getElementById('printBtn');
+  if (!btn) return;
+
+  // Mobile print instruction overlay
+  function showMobilePrintGuide() {
+    const overlay = document.createElement('div');
+    overlay.id = 'mobilePrintOverlay';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','z-index:9999',
+      'background:rgba(10,7,2,0.82)','backdrop-filter:blur(6px)',
+      'display:flex','align-items:flex-end','justify-content:center',
+      'padding:0 0 env(safe-area-inset-bottom,0) 0',
+      'animation:overlayIn 0.28s ease'
+    ].join(';');
+
+    const sheet = document.createElement('div');
+    sheet.style.cssText = [
+      'background:#1e1608','border:1px solid rgba(201,169,110,0.28)',
+      'border-top:1px solid rgba(201,169,110,0.5)',
+      'border-radius:16px 16px 0 0',
+      'padding:28px 24px 36px','width:100%','max-width:480px',
+      'font-family:"Lato",sans-serif','color:var(--accent-xl)',
+      'animation:sheetUp 0.32s cubic-bezier(0.22,1,0.36,1)'
+    ].join(';');
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+
+    let stepsHTML = '';
+    if (isIOS) {
+      stepsHTML = `
+        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">1.</span>
+          <span>Tap the <strong style="color:var(--accent-l)">Share</strong> button <span style="font-size:1.1em">⎙</span> at the bottom of your browser</span>
+        </div>
+        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">2.</span>
+          <span>Scroll down and tap <strong style="color:var(--accent-l)">Print</strong></span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">3.</span>
+          <span>Choose your printer or save as PDF</span>
+        </div>`;
+    } else if (isAndroid) {
+      stepsHTML = `
+        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">1.</span>
+          <span>Tap the browser <strong style="color:var(--accent-l)">Menu ⋮</strong> (top right)</span>
+        </div>
+        <div style="margin-bottom:10px;display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">2.</span>
+          <span>Tap <strong style="color:var(--accent-l)">Share</strong> or <strong style="color:var(--accent-l)">Print</strong></span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">3.</span>
+          <span>Select your printer or <strong style="color:var(--accent-l)">Save as PDF</strong></span>
+        </div>`;
+    } else {
+      stepsHTML = `
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <span style="color:var(--accent);font-size:1.1rem;min-width:24px">→</span>
+          <span>Use your browser menu and select <strong style="color:var(--accent-l)">Print</strong> or press <strong style="color:var(--accent-l)">Ctrl+P</strong> / <strong style="color:var(--accent-l)">Cmd+P</strong></span>
+        </div>`;
+    }
+
+    sheet.innerHTML = `
+      <div style="width:40px;height:4px;background:rgba(201,169,110,0.3);border-radius:2px;margin:0 auto 24px"></div>
+      <div style="font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--accent);opacity:0.8;margin-bottom:8px">Print Invitation</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2rem;color:var(--accent-l);margin-bottom:24px;line-height:1.4">To print, follow these steps:</div>
+      <div style="font-size:0.9rem;line-height:1.7;color:rgba(245,237,216,0.85);margin-bottom:28px">${stepsHTML}</div>
+      <button id="closeMobilePrint" style="width:100%;padding:15px;background:none;border:1px solid rgba(201,169,110,0.3);border-radius:2px;color:var(--accent);font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer">Got it</button>
+    `;
+
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    document.getElementById('closeMobilePrint').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  }
+
+  btn.addEventListener('click', function() {
+    if (isTouchDevice) {
+      // Try window.print() first — it works on some Android browsers
+      // If it doesn't fire within a short time, show the guide
+      let printed = false;
+      window.addEventListener('afterprint', function onAP() {
+        printed = true;
+        window.removeEventListener('afterprint', onAP);
+      }, { once: true });
+      try { window.print(); } catch(e) {}
+      // Give it 600ms; if afterprint never fires, show the guide
+      setTimeout(() => { if (!printed) showMobilePrintGuide(); }, 600);
+    } else {
+      window.print();
+    }
+  });
+
+  // Inject keyframe animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes overlayIn { from{opacity:0} to{opacity:1} }
+    @keyframes sheetUp   { from{transform:translateY(100%)} to{transform:translateY(0)} }
+  `;
+  document.head.appendChild(style);
+})();
+</script>
+</body>
+</html>
